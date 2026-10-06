@@ -1,1 +1,6 @@
-<Solution />
+<Solution>
+  <Project Path="src/FikaGg.Api/FikaGg.Api.csproj" />
+  <Project Path="src/FikaGg.AppHost/FikaGg.AppHost.csproj" />
+  <Project Path="src/FikaGg.ServiceDefaults/FikaGg.ServiceDefaults.csproj" />
+  <Project Path="tests/FikaGg.Tests/FikaGg.Tests.csproj" />
+</Solution>

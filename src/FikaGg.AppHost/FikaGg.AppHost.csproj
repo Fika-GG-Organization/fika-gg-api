@@ -9,4 +9,13 @@
     <UserSecretsId>1ee32df4-248c-4cfb-89e4-11bc7162e9fd</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.6.0" />
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FikaGg.Api\FikaGg.Api.csproj" />
+  </ItemGroup>
+
 </Project>
