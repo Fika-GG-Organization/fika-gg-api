@@ -15,6 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\FikaGg.Api\FikaGg.Api.csproj" />
+    <ProjectReference Include="..\..\src\FikaGg.ServiceDefaults\FikaGg.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 

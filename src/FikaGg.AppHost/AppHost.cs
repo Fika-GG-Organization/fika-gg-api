@@ -1,8 +1,16 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var api = builder.AddProject<Projects.FikaGg_Api>("api");
+var postgres = builder.AddPostgres("postgres")
+    .WithDataVolume()
+    .WithPgAdmin();
 
-builder.AddJavaScriptApp("frontend", "../../../fika-gg-frontend", "dev")
+var db = postgres.AddDatabase("fikaggdb");
+
+var api = builder.AddProject<Projects.FikaGg_Api>("api")
+    .WithReference(db)
+    .WaitFor(db);
+
+builder.AddJavaScriptApp("frontend", "../../../fika-gg-web", "dev")
        .WithReference(api)
        .WithHttpEndpoint(port: 3000, env: "PORT");
 
