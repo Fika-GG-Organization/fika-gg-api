@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
-// testing CI yml file
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
