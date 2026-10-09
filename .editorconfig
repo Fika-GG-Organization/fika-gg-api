@@ -69,6 +69,7 @@ csharp_prefer_braces = true:warning
 # Unnecessary code warning
 
 dotnet_code_quality_unused_parameters = all:suggestion
+dotnet_diagnostic.IDE0022.severity = none
 dotnet_diagnostic.IDE0058.severity = suggestion
 dotnet_diagnostic.IDE0059.severity = suggestion
 
