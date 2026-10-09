@@ -63,12 +63,15 @@ csharp_style_expression_bodied_properties = true:suggestion
 
 csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
 
+csharp_style_namespace_declarations = file_scoped
+
 csharp_prefer_braces = true:warning
 
 
 # Unnecessary code warning
 
 dotnet_code_quality_unused_parameters = all:suggestion
+dotnet_diagnostic.IDE0022.severity = none
 dotnet_diagnostic.IDE0058.severity = suggestion
 dotnet_diagnostic.IDE0059.severity = suggestion
 
