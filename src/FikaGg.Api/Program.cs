@@ -32,7 +32,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddExceptionHandler<FikaGg.Api.Middlewares.GlobalExceptionHandler>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 // Scopes
 
