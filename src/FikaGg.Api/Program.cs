@@ -1,3 +1,4 @@
+using FikaGg.Api.Common.Middlewares;
 using FikaGg.Api.Data;
 using FikaGg.Api.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +14,7 @@ builder.Services.AddAuthentication(IdentityConstants.BearerScheme);
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddProblemDetails();
 builder.Services.AddIdentityApiEndpoints<ApplicationUser>(options =>
 {
     options.User.RequireUniqueEmail = true;
@@ -30,6 +32,8 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
 // Scopes
 
 var app = builder.Build();
@@ -44,6 +48,11 @@ if (app.Environment.IsDevelopment())
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await db.Database.MigrateAsync();
+}
+else
+{
+	app.UseExceptionHandler(); // Will catch uncaught exceptions.
+	app.UseHsts();             // Tells client browser to switch from HTTP to HTTPS.
 }
 
 app.UseHttpsRedirection();
