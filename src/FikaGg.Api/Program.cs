@@ -1,6 +1,6 @@
+using FikaGg.Api.Common.Middlewares;
 using FikaGg.Api.Data;
 using FikaGg.Api.Entities;
-using FikaGg.Api.Middlewares;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
