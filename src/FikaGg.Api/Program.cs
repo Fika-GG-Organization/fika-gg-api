@@ -1,5 +1,6 @@
 using FikaGg.Api.Data;
 using FikaGg.Api.Entities;
+using FikaGg.Api.Middlewares;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -31,6 +32,8 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddExceptionHandler<FikaGg.Api.Middlewares.GlobalExceptionHandler>();
+
 // Scopes
 
 var app = builder.Build();
@@ -45,6 +48,11 @@ if (app.Environment.IsDevelopment())
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await db.Database.MigrateAsync();
+}
+else
+{
+	app.UseExceptionHandler(); // Will catch uncaught exceptions.
+	app.UseHsts();             // Tells client browser to switch from HTTP to HTTPS.
 }
 
 app.UseHttpsRedirection();
