@@ -1,6 +1,6 @@
 # Folder Structure
 
-Learn how we structure the `fika-gg-api` repository.
+Learn the folder structure of `fika-gg-api` repository.
 
 ## Overview
 
@@ -10,7 +10,7 @@ Learn how we structure the `fika-gg-api` repository.
     - `📁github/` ci/cd (.yml files for devops)
     - `📁docs/` documentation files
     - `📁src/`
-        - [`📁FikaGg.Api/`](#fikagg.api) where the server code lives
+        - [`📁FikaGg.Api/`](#fikagg.api) where most of server code lives
           - [`#️⃣Program.cs`](../src/fikagg.api/program.cs) entry point (server app code starts here)
         - `📁FikaGg.AppHost/` Aspire files
         - `📁FikaGg.ServiceDefaults/` telemetry, health checks, logging, etc...
@@ -25,8 +25,8 @@ Learn how we structure the `fika-gg-api` repository.
 
 This is the main project folder for our controller-based API. 
 
-Most code files in here are organised into "Features" and is structured based on **Vertical Slice Design**. 
-See [`Features/`](#features) for more examples.
+Most code files are organised into "Features" and structured based on **Feature Sliced Design**. 
+See [`Features/`](#features) for examples.
 
 `FikaGg.Api/` have the following folders.
 
@@ -35,7 +35,7 @@ See [`Features/`](#features) for more examples.
 - [`📁Entities/`](#entities) database entities
 - [`📁Features/`](#features) controllers, services, DTOs, validators, etc...
 - [`📁Integrations/`](#integrations) external services
-- `📁Migrations/` database migration files
+- `📁Migrations/` database migration files added by `Add-Migration`
 - `📁Properties/` Visual Studio settings folder (do not touch)
 
 ### `Common/`
@@ -43,14 +43,24 @@ See [`Features/`](#features) for more examples.
 Any generic code that is shared for the whole project should be placed in this folder.
 For example middlewares, interfaces, helper methods, exception handlers, etc.
 
-If a class, method, constant or variable is used in multiple folders/namespaces, 
+If a class, method, constant or variable will be used in multiple folders/namespaces, 
 then consider moving them into `Common/`.
+
+Files in the `Common/` folder should be grouped by their type, for example:
+
+- Enum files should be inside an `Enums/` folder
+- Interface files should be inside an `Interfaces/` folder
+- Middleware files should be inside an `Middlewares/` folder
+- Files with helper/utility methods should be inside an `Utils/` folder 
+- etc...
+
+If a folder doesn't exist, please do add it. 
 
 ### `Entities/`
 
 Place all `DbContext` entities in this folder. 
 
-An entity represents a database table.
+An entity is a class that represents a database table.
 
 ### `Features/`
 
@@ -88,8 +98,7 @@ Group them instead by their relationship with other code.
 In the example above, we know that `EventDTO`, `EventService` and `EventController` classes mostly interact with each other; 
 we can therefor group them together as a single Event "Feature"! 
 
-This way of structuring is known as **Vertical Slice Design**. 
-For more, see https://milanjovanovic.tech/blog/vertical-slice-architecture.
+Grouping based on features is known as **Feature Sliced Design**.
 
 ### `Integrations/`
 
