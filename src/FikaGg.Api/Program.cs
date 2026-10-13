@@ -1,3 +1,4 @@
+using FikaGg.Api.Common.Extensions;
 using FikaGg.Api.Common.Middlewares;
 using FikaGg.Api.Data;
 using FikaGg.Api.Entities;
@@ -59,6 +60,8 @@ app.UseHttpsRedirection();
 app.UseCors("frontend");
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapGroup("/api/auth").MapIdentityApi<ApplicationUser>();
+app.MapGroup("/api/auth")
+	.MapLogoutIdentityApi<ApplicationUser>()
+	.MapIdentityApi<ApplicationUser>();
 app.MapControllers();
 await app.RunAsync();
