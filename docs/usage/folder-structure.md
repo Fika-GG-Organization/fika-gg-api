@@ -95,14 +95,22 @@ Group them instead by their relationship with other code.
   └#️⃣GameService.cs
 ```
 
-In the example above, we know that `EventDTO`, `EventService` and `EventController` classes mostly interact with each other; 
+In the example above, we know that `EventDTO`, `EventService` and `EventController` classes mostly 
+interact with each other; 
 we can therefor group them together as a single Event "Feature"! 
 
 Grouping based on features is known as **Feature Sliced Design**.
 
 ### `Integrations/`
 
-WIP
+Place files that sends HTTP requests to, or does some other interactions with, outside APIs in here. 
+Group files by "feature", similar to the `Features/` folder.
+
+```
+📁Integrations/
+└📁Rawg/
+  └#️⃣RawgClient.cs
+```
 
 ## `FikaGg.Tests`
 
