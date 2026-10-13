@@ -40,33 +40,39 @@ The file defines rules which will override local code editor settings.
 
 EditorConfig defines coding style rules. It can define:
 
+- Which character encoding to use.
+    
+    ```editorconfig
+    charset = utf-8
+    ```
+
 - If pressing TAB inserts space or tab.
 
-    ```editorconfig
+    ```
     indent_style = space
     indent_style = tab
     ```
 - How many characters deep a TAB press is.
     
-    ```editorconfig
+    ```
     indent_size = 4
     ```
 
 - If spaces at the end of a line should be trimmed.
 
-    ```editorconfig
+    ```
     trim_trailing_whitespace = true
     ```
 
 - If the last line in character is 
 
-    ```editorconfig
+    ```
     insert_final_newline = true
     ```
 
 - What [end-of-line character🔗] is inserted when pressing Enter.
 
-    ```editorconfig
+    ```
     end_of_line = lf     # Default to Linux and modern MacOS
     end_of_line = cr     # Default to older MacOS
     end_of_line = crlf   # Default to Windows
@@ -78,14 +84,14 @@ EditorConfig defines coding style rules. It can define:
 
     Applies to all files
 
-    ```editorconfig
+    ```
     [*]
     charset = utf-8
     ```
 
     Applies to Program.cs file only
 
-    ```editorconfig
+    ```
     [Program.cs]
     end_of_line = crlf
     insert_final_newline = true
@@ -93,11 +99,51 @@ EditorConfig defines coding style rules. It can define:
     
     Applies to all files ending with .json, .js, .jsx, .ts, and .tsx 
     
-    ```editorconfig
+    ```
     [*.{json,js,jsx,ts,tsx}]
     indent_style = space
     indent_size = 2
     ```
-- Hide or show warnings in Visual Studio.
 
-- To see all EditorConfig settings, visit [EditorConfig Wiki🔗](https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties)
+- Set Visual Studio code rules 
+
+    ```
+    csharp_style_namespace_declarations = block_scoped
+    ```
+
+    ![](images/namespace_block-scoped.png)
+    
+    ```
+    csharp_style_namespace_declarations = file_scoped
+    ```
+
+    ![](images/namespace_file-scoped.png)
+
+- Hide or show Visual Studio warnings.
+
+    ```
+    dotnet_diagnostic.IDE0022.severity = none
+    ```
+
+    ![](images/IDE0022_none.png)
+    
+    ```
+    dotnet_diagnostic.IDE0022.severity = suggestion
+    ```
+
+    ![](images/IDE0022_suggestion.png)
+
+    ```
+    dotnet_diagnostic.IDE0022.severity = warning
+    ```
+
+    ![](images/IDE0022_warning.png)
+
+    ```
+    dotnet_diagnostic.IDE0022.severity = error
+    ```
+
+    ![](images/IDE0022_error.png)
+
+
+To see all EditorConfig settings, visit [EditorConfig Wiki🔗](https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties)
