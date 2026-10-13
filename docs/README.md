@@ -3,7 +3,6 @@
 ## Getting Started
 
 - [Folder Structure](usage/folder-structure.md) — Folder structure overview
-- [Working with Git](usage/git-conduct.md) — WIP
 - [WTF is EditorConfig?](usage/editorconfig.md) — How the `.editorconfig` file works
 - [API🔗‍️](https://www.rfc-editor.org/rfc/rfc9110.html#section-9) — How to design HTTP methods according to RFC9110
 
