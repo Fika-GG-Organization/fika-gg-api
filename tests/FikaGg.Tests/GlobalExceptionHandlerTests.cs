@@ -18,7 +18,7 @@ public class GlobalExceptionHandlerTests
 	[Fact]
 	public async Task TryHandleAsync_ValidException_LogsAndWritesProblemDetails()
 	{
-		
+		// Arrange
 		var httpContext = new DefaultHttpContext();
 		var exception = new InvalidOperationException("Something went wrong");
 		var cancellationToken = CancellationToken.None;
@@ -32,12 +32,14 @@ public class GlobalExceptionHandlerTests
 		var result = await handler.TryHandleAsync(httpContext, exception, cancellationToken);
 
 		//Assert
-		Assert.True(result);
+		Assert.True(result, $"Assert failed: {nameof(result)} was not true.");
 
 	
-		Assert.Single(fakeLogger.LoggedEntries);
-		Assert.Equal(LogLevel.Warning, fakeLogger.LoggedEntries[0].LogLevel);
-		Assert.Equal(exception, fakeLogger.LoggedEntries[0].Exception);
+		var logEntry = Assert.Single(fakeLogger.LoggedEntries);
+		Assert.Equal(LogLevel.Warning, logEntry.LogLevel);
+		Assert.Equal(exception, logEntry.Exception);
+
+		_output.WriteLine(logEntry.ToString());
 
 		// Verify ProblemDetailsService was invoked with correct data
 		Assert.NotNull(fakeProblemDetailsService.LastContext);
