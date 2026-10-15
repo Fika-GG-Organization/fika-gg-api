@@ -51,6 +51,16 @@ The repository uses the following 3rd party dependencies.
 
 - Aspire
 - Scalar
+- [RAWG API](https://rawg.io/apidocs) — game data
+
+### Secrets
+
+The API needs a RAWG API key to search for games. 
+Get a free key at [rawg.io/apidocs](https://rawg.io/apidocs), then run this from the repository root:
+
+    dotnet user-secrets set "Parameters:rawg-api-key" "<your-key>" --project src/FikaGg.AppHost
+
+The key is stored locally on your machine (never in the repository) and passed to the API by Aspire on startup.
 
 ### CLI
 
