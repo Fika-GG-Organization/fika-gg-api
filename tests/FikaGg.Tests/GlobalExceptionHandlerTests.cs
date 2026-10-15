@@ -8,11 +8,22 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace FikaGg.Tests;
 
 public class GlobalExceptionHandlerTests
 {
+	/// <summary>
+	/// <see cref="ITestOutputHelper"/> should be used to write to Test Detail Summary output.<br /><br />
+	/// <see cref="Console.WriteLine()"/> does not work in xUnit test methods.
+	/// </summary>
+	private readonly ITestOutputHelper _output;
+
+	public GlobalExceptionHandlerTests(ITestOutputHelper output)
+	{
+		_output = output;
+	}
 
 
 	[Fact]
