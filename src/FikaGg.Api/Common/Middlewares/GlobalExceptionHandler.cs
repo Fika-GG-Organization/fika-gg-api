@@ -31,8 +31,7 @@ public sealed partial class GlobalExceptionHandler : IExceptionHandler
 
 		var status = StatusCodesUtils.GetStatusCode(exception);
 
-		// Uncomment this, if `Status = status.Key` does override default status code.
-		// httpContext.Response.StatusCode = status.Key;
+		httpContext.Response.StatusCode = status.Key;
 
 		return await _problemDetailsService.TryWriteAsync(new()
 		{
