@@ -1,6 +1,8 @@
 using FikaGg.Api.Common.Middlewares;
 using FikaGg.Api.Data;
 using FikaGg.Api.Entities;
+using FikaGg.Api.Features.Game;
+using FikaGg.Api.Integrations.Rawg;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -31,10 +33,14 @@ builder.Services.AddCors(options =>
             .AllowCredentials();
     });
 });
-
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddHttpClient<IRawgClient, RawgClient>(client =>
+{
+	client.BaseAddress = new Uri("https://api.rawg.io/");
+});
 
 // Scopes
+builder.Services.AddScoped<GameService>();
 
 var app = builder.Build();
 app.MapDefaultEndpoints();
