@@ -2,38 +2,38 @@ using FikaGg.Api.Common.Utils;
 using FikaGg.Api.Data;
 using FikaGg.Api.Entities;
 using FikaGg.Api.Features.EventHandlers;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using FikaGg.Api.Features.EventViews;
 
-namespace FikaGg.Api.Features.Events;
+namespace FikaGg.Api.Features.EventViews;
 
-public class EventViewsService : IEventViewsService
+public class EventViewsService(AppDbContext context) : IEventViewsService
 {
-	private readonly AppDbContext _context;
-	public EventViewsService(AppDbContext context)
-	{
-		_context = context;
-	}
-
 	public Task<Event?> GetEventByIdAsync(int eventId)
 	{
 		throw new NotImplementedException();
 	}
 	public async Task<IEnumerable<GetEventDTO>> GetEventsAsync(string startDate, string endDate)
 	{
-		var events = await _context.Events
+		var events = await context.Events
+			.AsNoTracking()
 			.Where(e => e.StartTime >= Converter.DateConverter(startDate) && e.EndTime <= Converter.DateConverter(endDate))
-			.Include(e => e.Game)
-			.Select(e => new GetEventDTO
-			{
-				HostId = e.Host.Id,
-				Title = e.Title,
-				Description = e.Description,
-				Game = e.Game.Name,
-				StartTime = e.StartTime,
-				EndTime = e.EndTime,
-				CreatedAt = e.CreatedAt,
-				Participants = e.Participants.Count()
-			})
+			.Select(e => new GetEventDTO(
+
+				e.Id,
+				e.Host.Id,
+				e.Title,
+				e.Description,
+				e.Game.Id,
+				e.StartTime,
+				e.EndTime,
+				e.Game.CoverUrl,
+				e.Participants.Count(),
+				e.MaxPlayers,
+				e.CreatedAt
+				)
+			)
 			.ToListAsync();
 
 		return events;

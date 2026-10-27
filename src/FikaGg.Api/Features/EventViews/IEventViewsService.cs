@@ -1,7 +1,7 @@
 using FikaGg.Api.Entities;
 using FikaGg.Api.Features.EventHandlers;
 
-namespace FikaGg.Api.Features.Events;
+namespace FikaGg.Api.Features.EventViews;
 
 public interface IEventViewsService
 {

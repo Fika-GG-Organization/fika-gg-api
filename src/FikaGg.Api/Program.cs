@@ -1,6 +1,8 @@
 using FikaGg.Api.Common.Middlewares;
 using FikaGg.Api.Data;
 using FikaGg.Api.Entities;
+using FikaGg.Api.Features.EventHandlers;
+using FikaGg.Api.Features.EventViews;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -31,6 +33,9 @@ builder.Services.AddCors(options =>
             .AllowCredentials();
     });
 });
+
+builder.Services.AddScoped<IEventHandlerService, EventHandlerService>();
+builder.Services.AddScoped<IEventViewsService, EventViewsService>();
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 

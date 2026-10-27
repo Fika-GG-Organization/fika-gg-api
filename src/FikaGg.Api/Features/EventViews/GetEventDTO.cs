@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-
-namespace FikaGg.Api.Features.Events;
+namespace FikaGg.Api.Features.EventViews;
 
 public record GetEventDTO(
 	int Id,
@@ -14,5 +13,5 @@ public record GetEventDTO(
 	string? CoverUrl,
 	int? ParticipantCount,
 	int? MaxPlayers,
-	List<GetEventParticipantDTO> Players
+	DateTime CreatedAt
 );
