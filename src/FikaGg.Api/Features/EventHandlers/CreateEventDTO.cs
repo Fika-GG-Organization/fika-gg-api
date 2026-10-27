@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace FikaGg.Api.Features.Events;
+namespace FikaGg.Api.Features.EventHandlers;
 
 public class CreateEventDTO
 {
