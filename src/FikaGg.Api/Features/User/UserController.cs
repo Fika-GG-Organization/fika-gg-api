@@ -8,15 +8,15 @@ using System.ComponentModel.DataAnnotations;
 
 
 [ApiController]
-[Route("api/user/{id}")]
+[Route("api/user")]
 [Authorize]
 public class UserController(UserService userService) : ControllerBase
 {
-	[HttpGet("search")]
+	[HttpGet("{id}")]
 	public async Task<ActionResult<List<UserDataDTO>>> Search(
-		[FromQuery, Required, MaxLength(100)] string query)
+		[FromRoute, Required, MaxLength(100)] string id)
 	{
-		var results = await userService.GetUserAsync(query);
+		var results = await userService.GetUserAsync(id);
 		return Ok(results);
 	}
 }
