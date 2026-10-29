@@ -4,7 +4,6 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>9e9381ce-ebfc-4bf3-9162-fa1e8af2599c</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,10 +28,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Common\" />
+    <Folder Include="Common\" />
     <Folder Include="Integrations\" />
     <Folder Include="Entities\" />
     <Folder Include="Data\" />
-    <Folder Include="Integrations\" />
   </ItemGroup>
 
 </Project>

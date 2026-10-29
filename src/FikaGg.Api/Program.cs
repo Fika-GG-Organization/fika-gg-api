@@ -1,6 +1,8 @@
 using FikaGg.Api.Common.Middlewares;
 using FikaGg.Api.Data;
 using FikaGg.Api.Entities;
+using FikaGg.Api.Features.Game;
+using FikaGg.Api.Integrations.Rawg;
 using FikaGg.Api.Features.EventHandlers;
 using FikaGg.Api.Features.EventViews;
 using Microsoft.AspNetCore.Identity;
@@ -38,8 +40,13 @@ builder.Services.AddScoped<IEventHandlerService, EventHandlerService>();
 builder.Services.AddScoped<IEventViewsService, EventViewsService>();
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddHttpClient<IRawgClient, RawgClient>(client =>
+{
+	client.BaseAddress = new Uri("https://api.rawg.io/");
+});
 
 // Scopes
+builder.Services.AddScoped<GameService>();
 
 var app = builder.Build();
 app.MapDefaultEndpoints();
