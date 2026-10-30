@@ -27,12 +27,4 @@
     <ProjectReference Include="..\FikaGg.ServiceDefaults\FikaGg.ServiceDefaults.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Common\" />
-    <Folder Include="Common\" />
-    <Folder Include="Integrations\" />
-    <Folder Include="Entities\" />
-    <Folder Include="Data\" />
-  </ItemGroup>
-
 </Project>
