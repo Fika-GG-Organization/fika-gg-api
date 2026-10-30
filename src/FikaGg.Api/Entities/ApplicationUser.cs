@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace FikaGg.Api.Entities;
@@ -10,16 +10,13 @@ public class ApplicationUser : IdentityUser
 
 	// Relations
 
-	/// <summary> List of Events hosted by this User. </summary>
-	/// <remarks> Navigation Property. Should not exist in database. </remarks>
+	/// <summary> A <b>Navigation Property</b> that points to the list of Events hosted by this User. </summary>
 	public virtual ICollection<Event> HostedEvents { get; set; } = [];
 
-	/// <summary> List of Events this User participates in. </summary>
-	/// <remarks> Navigation Property. Should not exist in database. </remarks>
+	/// <summary> A <b>Navigation Property</b> that points to the list of Events this User participates in. </summary>
 	public virtual ICollection<EventParticipant> JoinedEvents { get; set; } = [];
 
-	/// <summary> List of Games added to this User's profile. </summary>
-	/// <remarks> Navigation Property. Should not exist in database. </remarks>
+	/// <summary> A <b>Navigation Property</b> that points to the list of Games in this User's profile. </summary>
 	public virtual ICollection<UserGame> Games { get; set; } = [];
 
 }

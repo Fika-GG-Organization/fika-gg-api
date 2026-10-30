@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace FikaGg.Api.Entities;
 
@@ -11,11 +11,9 @@ public class Game
 
 	// Relations
 
-	/// <summary> List of Users that has added this Game to their profile. </summary>
-	/// <remarks> Navigation Property. Should not exist in database. </remarks>
+	/// <summary> A <b>Navigation Property</b> that points to the list of Users that has this Game in their profile. </summary>
 	public virtual ICollection<UserGame> UserGames { get; set; } = [];
 
-	/// <summary> List of Events that wants to play this Game. </summary>
-	/// <remarks> Navigation Property. Should not exist in database. </remarks>
+	/// <summary> A <b>Navigation Property</b> that points to the list of Events that wants to play this Game. </summary>
 	public virtual ICollection<Event> Events { get; set; } = [];
 }

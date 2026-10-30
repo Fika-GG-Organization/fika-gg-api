@@ -1,4 +1,4 @@
-﻿using FikaGg.Api.Common.Enums;
+using FikaGg.Api.Common.Enums;
 
 namespace FikaGg.Api.Entities;
 
@@ -11,11 +11,9 @@ public class EventParticipant
 
 	// Relations
 
-	/// <summary> Connects Event with User. </summary>
-	/// <remarks> Navigation Property. Should not exist in database. </remarks>
+	/// <summary> A <b>Navigation Property</b> that points to the Event associated with this User. </summary>
 	public virtual Event? Event { get; set; }
 
-	/// <summary> Connects User with Event. </summary>
-	/// <remarks> Navigation Property. Should not exist in database. </remarks>
+	/// <summary> A <b>Navigation Property</b> that points to the User associated with this Event. </summary>
 	public virtual ApplicationUser? User { get; set; }
 }

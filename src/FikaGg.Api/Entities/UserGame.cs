@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace FikaGg.Api.Entities;
 
@@ -7,14 +7,12 @@ public class UserGame
     public string UserId { get; set; } = "";
     public int GameId { get; set; }
     [MaxLength(50)] public string? GamerTag { get; set; }
-    
-    // Relations
 
-	/// <summary> Connects User with Game. </summary>
-	/// <remarks> Navigation Property. Should not exist in database. </remarks>
+	// Relations
+
+	/// <summary> A <b>Navigation Property</b> that points to the User associated with this Game. </summary>
 	public virtual ApplicationUser? User { get; set; }
 
-	/// <summary> Connects Game with User. </summary>
-	/// <remarks> Navigation Property. Should not exist in database. </remarks>
+	/// <summary> A <b>Navigation Property</b> that points to the Game associated with this User. </summary>
 	public virtual Game? Game { get; set; }
 }
