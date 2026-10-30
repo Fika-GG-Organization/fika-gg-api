@@ -9,6 +9,13 @@ public class EventParticipant
     public ParticipantStatus Status { get; set; }
     public DateTime JoinedAt { get; set; }
 
-    public Event Event { get; set; } = null!;
-    public ApplicationUser User { get; set; } = null!;
+	// Relations
+
+	/// <summary> Connects Event with User. </summary>
+	/// <remarks> Navigation Property. Should not exist in database. </remarks>
+	public virtual Event? Event { get; set; }
+
+	/// <summary> Connects User with Event. </summary>
+	/// <remarks> Navigation Property. Should not exist in database. </remarks>
+	public virtual ApplicationUser? User { get; set; }
 }
