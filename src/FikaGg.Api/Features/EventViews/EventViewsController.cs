@@ -1,18 +1,22 @@
-using FikaGg.Api.Entities;
 using FikaGg.Api.Features.EventHandlers;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.Design;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace FikaGg.Api.Features.EventViews;
 
-[Route("api/[controller]")]
+[Route("api/events")]
 [ApiController]
 public class EventViewsController(IEventViewsService service) : ControllerBase
 {
+	[HttpGet("{id:int}")]
+	public async Task<ActionResult<GetEventByIdDTO>> GetEventPage([FromRoute] int id)
+	{
+		var result = await service.GetEventByIdAsync(id);
 
-	[HttpGet("/getAll")]
+		return Ok(result);
+	}
+
+
+	[HttpGet("getAll")]
 	public async Task<IActionResult> GetAll(string startTime, string endTime)
 	{
 		var events = await service.GetEventsAsync(startTime, endTime);

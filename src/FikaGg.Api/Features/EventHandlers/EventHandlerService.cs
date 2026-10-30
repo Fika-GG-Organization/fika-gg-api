@@ -8,21 +8,23 @@ namespace FikaGg.Api.Features.EventHandlers;
 
 public class EventHandlerService(AppDbContext context) : IEventHandlerService
 {
-	async public Task<Event> CreateEventAsync(CreateEventDTO createEventDto, string userId)
+	public async Task<Event> CreateEventAsync(CreateEventDTO createEventDto, string userId)
 	{
-		var newEvent = new Event
+		Validate.CreateEventDto(createEventDto);
+
+		var result = await context.Events.AddAsync(new()
 		{
+			HostId = userId,
 			GameId = createEventDto.GameId,
 			Title = createEventDto.Title,
 			Description = createEventDto.Description,
 			StartTime = createEventDto.StartTime,
 			EndTime = createEventDto.EndTime,
 			MaxPlayers = createEventDto.MaxPlayers,
-			CreatedAt = DateTime.UtcNow
-		};
-		await context.Events.AddAsync(newEvent);
+			CreatedAt = createEventDto.CreatedAt,
+		});
 		await context.SaveChangesAsync();
-		return newEvent;
+		return result.Entity;
 	}
 	public Task<Event> UpdateEventAsync(int eventId, CreateEventDTO updateEventDto, string userId) => throw new NotImplementedException();
 	public Task<Event> DeleteEventAsync(int eventId, string userId) => throw new NotImplementedException();
