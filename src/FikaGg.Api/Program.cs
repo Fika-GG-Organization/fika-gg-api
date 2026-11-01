@@ -2,6 +2,7 @@ using FikaGg.Api.Common.Middlewares;
 using FikaGg.Api.Data;
 using FikaGg.Api.Entities;
 using FikaGg.Api.Features.Game;
+using FikaGg.Api.Features.User;
 using FikaGg.Api.Integrations.Rawg;
 using FikaGg.Api.Features.EventHandlers;
 using FikaGg.Api.Features.EventViews;
@@ -44,6 +45,7 @@ builder.Services.AddHttpClient<IRawgClient, RawgClient>(client =>
 
 // Scopes
 builder.Services.AddScoped<GameService>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<IEventHandlerService, EventHandlerService>();
 builder.Services.AddScoped<IEventViewsService, EventViewsService>();
 
