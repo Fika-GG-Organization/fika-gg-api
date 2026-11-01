@@ -1,6 +1,6 @@
-namespace FikaGg.Api.Integrations.Cloudinary;
+namespace FikaGg.Api.Integrations.CloudinaryConfig;
 
-public class CloudinarySettings
+public class CloudinarySetting
 {
 	public const string SectionName = "Cloudinary";
 

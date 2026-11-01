@@ -2,8 +2,8 @@ using FikaGg.Api.Common.Middlewares;
 using FikaGg.Api.Data;
 using FikaGg.Api.Entities;
 using FikaGg.Api.Features.Game;
-using FikaGg.Api.Integrations.Cloudinary;
 using FikaGg.Api.Features.User;
+using FikaGg.Api.Integrations.CloudinaryConfig;
 using FikaGg.Api.Integrations.Rawg;
 using FikaGg.Api.Features.EventHandlers;
 using FikaGg.Api.Features.EventViews;
@@ -44,14 +44,7 @@ builder.Services.AddHttpClient<IRawgClient, RawgClient>(client =>
 	client.BaseAddress = new Uri("https://api.rawg.io/");
 });
 
-builder.Services
-	.AddOptions<CloudinarySettings>()
-	.Bind(builder.Configuration.GetSection(CloudinarySettings.SectionName))
-	.Validate(s => !string.IsNullOrWhiteSpace(s.CloudName)
-		&& !string.IsNullOrWhiteSpace(s.ApiKey)
-		&& !string.IsNullOrWhiteSpace(s.ApiSecret),
-		"Cloudinary settings are missing.")
-	.ValidateOnStart();
+builder.Services.AddCloudinary(builder.Configuration);
 
 // Scopes
 builder.Services.AddScoped<GameService>();
