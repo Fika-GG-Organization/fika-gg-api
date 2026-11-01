@@ -4,6 +4,8 @@ using FikaGg.Api.Entities;
 using FikaGg.Api.Features.Game;
 using FikaGg.Api.Features.User;
 using FikaGg.Api.Integrations.Rawg;
+using FikaGg.Api.Features.EventHandlers;
+using FikaGg.Api.Features.EventViews;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -28,12 +30,13 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("frontend", policy =>
     {
-        policy.WithOrigins(builder.Configuration["frontend"]??"http://localhost:5173")
+        policy.WithOrigins(builder.Configuration["frontend"]??"http://localhost:5173", "http://localhost:3000")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
     });
 });
+
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHttpClient<IRawgClient, RawgClient>(client =>
 {
@@ -43,7 +46,10 @@ builder.Services.AddHttpClient<IRawgClient, RawgClient>(client =>
 // Scopes
 builder.Services.AddScoped<GameService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<IEventHandlerService, EventHandlerService>();
+builder.Services.AddScoped<IEventViewsService, EventViewsService>();
 
+// Build app
 var app = builder.Build();
 app.MapDefaultEndpoints();
 
