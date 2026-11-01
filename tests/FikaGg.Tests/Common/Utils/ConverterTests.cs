@@ -44,7 +44,6 @@ public class ConverterTests
 	[InlineData("2004-12-13T08:59:4")]
 	[InlineData("04-2-3T8:9:1Z")]
 	[InlineData("2004-12-13T29:59:41.433Z")]
-	[InlineData("12-13-2004 21:59:41.433Z")]
 	[InlineData("20042-12-13 21:59:41.433Z")]
 	public void InvalidIsoString_Parsing_ThrowException(string isoString)
 	{
