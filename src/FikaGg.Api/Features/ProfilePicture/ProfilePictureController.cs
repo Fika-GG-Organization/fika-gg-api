@@ -1,8 +1,9 @@
 using FikaGg.Api.Integrations.CloudinaryConfig;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FikaGg.Api.Features.Cloudinary;
+namespace FikaGg.Api.Features.ProfilePicture;
 
+// Test controller
 [ApiController]
 [Route("api/profile-pictures")]
 public class ProfilePictureController(IImageStorageService storage) : ControllerBase

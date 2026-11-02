@@ -55,6 +55,7 @@ builder.Services.AddScoped<IEventViewsService, EventViewsService>();
 // Build app
 var app = builder.Build();
 app.MapDefaultEndpoints();
+app.UseExceptionHandler(); // Will catch uncaught exceptions.
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -62,13 +63,12 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 
-    using var scope = app.Services.CreateScope();
+	using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await db.Database.MigrateAsync();
 }
 else
 {
-	app.UseExceptionHandler(); // Will catch uncaught exceptions.
 	app.UseHsts();             // Tells client browser to switch from HTTP to HTTPS.
 }
 
