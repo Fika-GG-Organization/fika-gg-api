@@ -10,6 +10,7 @@ using FikaGg.Api.Features.EventViews;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using FikaGg.Api.Features.Avatars;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +48,7 @@ builder.Services.AddHttpClient<IRawgClient, RawgClient>(client =>
 builder.Services.AddCloudinary(builder.Configuration);
 
 // Scopes
+builder.Services.AddScoped<AvatarService>();
 builder.Services.AddScoped<GameService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<IEventHandlerService, EventHandlerService>();

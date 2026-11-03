@@ -7,20 +7,22 @@ namespace FikaGg.Api.Integrations.CloudinaryConfig;
 public class CloudinaryImageStorageService : IImageStorageService
 {
 	private readonly Cloudinary _cloudinary;
+	private readonly CloudinarySetting _setting;
 
 	public CloudinaryImageStorageService(IOptions<CloudinarySetting> options)
 	{
-		var s = options.Value;
-		_cloudinary = new Cloudinary(new Account(s.CloudName, s.ApiKey, s.ApiSecret));
+		_setting = options.Value;
+		_cloudinary = new Cloudinary(new Account(_setting.CloudName, _setting.ApiKey, _setting.ApiSecret));
 		_cloudinary.Api.Secure = true;
 	}
 
-	public async Task<UploadedImage> UploadProfilePictureAsync(Stream stream, string fileName, CancellationToken ct)
+	public async Task<UploadedImage> UploadAvatarAsync(Stream stream, string fileName, string userId, CancellationToken ct)
 	{
 		var uploadParams = new ImageUploadParams
 		{
+			// Resizing and cropping to 400x400 with face detection, so that the avatar is always square and centered
 			File = new FileDescription(fileName, stream),
-			Folder = "profile-pictures",
+			Folder = $"{_setting.RootFolder.Trim('/')}/avatars/{userId}",
 			Transformation = new Transformation()
 				.Width(400)
 				.Height(400)

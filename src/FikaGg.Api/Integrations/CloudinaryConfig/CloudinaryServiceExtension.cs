@@ -14,6 +14,7 @@ public static class CloudinaryServiceExtension
 				"Cloudinary settings are missing.")
 			.ValidateOnStart();
 
+		// Only one instance needed, since Cloudinary is thread-safe and can be reused across requests.
 		services.AddSingleton<IImageStorageService, CloudinaryImageStorageService>();
 
 		return services;

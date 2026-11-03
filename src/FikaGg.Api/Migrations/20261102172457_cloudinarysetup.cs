@@ -1,11 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace FikaGg.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class cloudinarysetup : Migration
+    public partial class CloudinarySetup : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
