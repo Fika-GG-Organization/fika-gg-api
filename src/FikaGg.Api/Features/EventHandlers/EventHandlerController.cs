@@ -26,4 +26,21 @@ public class EventHandlerController(IEventHandlerService service) : ControllerBa
 			value: newEvent);
 	}
 
+	[HttpPut("updateEvent/{id:int}")]
+	public async Task<IActionResult> Update(
+		[FromRoute] int id, [FromBody] CreateEventDTO eventDto)
+	{
+		var @event = await service.UpdateEventAsync(id, eventDto, UserId);
+
+		return Ok(@event);
+	}
+
+	[HttpDelete("deleteEvent/{id:int}")]
+	public async Task<IActionResult> Delete([FromRoute] int id)
+	{
+		await service.DeleteEventAsync(id, UserId);
+
+		return NoContent();
+	}
+
 }
