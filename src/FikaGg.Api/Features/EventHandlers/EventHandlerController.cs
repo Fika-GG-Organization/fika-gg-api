@@ -1,4 +1,5 @@
 using FikaGg.Api.Features.EventHandlers;
+using FikaGg.Api.Features.EventViews;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -17,9 +18,10 @@ public class EventHandlerController(IEventHandlerService service) : ControllerBa
 	{
 		var newEvent = await service.CreateEventAsync(createEventDto, UserId);
 
+		// CreatedAtAction returns the newly created event using our Get controller Action.
 		return CreatedAtAction(
-			actionName: nameof(EventViews.EventViewsController.GetEventPage),
-			controllerName: nameof(EventViews.EventViewsController),
+			actionName: nameof(EventViewsController.GetEventPage),
+			controllerName: nameof(EventViewsController),
 			routeValues: new { id = newEvent.Id },
 			value: newEvent);
 	}
