@@ -17,7 +17,7 @@ public class EventViewsController(IEventViewsService service) : ControllerBase
 
 
 	[HttpGet("getAll")]
-	public async Task<IActionResult> GetAll(string startTime, string endTime)
+	public async Task<ActionResult<IEnumerable<GetEventDTO>>> GetAll(string startTime, string endTime)
 	{
 		var events = await service.GetEventsAsync(startTime, endTime);
 		return Ok(events);
