@@ -7,7 +7,7 @@ namespace FikaGg.Api.Features.EventViews;
 [ApiController]
 public class EventViewsController(IEventViewsService service) : ControllerBase
 {
-	[HttpGet("{id:int}")]
+	[HttpGet("getById/{id:int}")]
 	public async Task<ActionResult<GetEventByIdDTO>> GetEventPage([FromRoute] int id)
 	{
 		var result = await service.GetEventByIdAsync(id);
@@ -16,9 +16,11 @@ public class EventViewsController(IEventViewsService service) : ControllerBase
 	}
 
 
-	[HttpGet("getAll")]
-	public async Task<IActionResult> GetAll(string startTime, string endTime)
+	[HttpGet("getCalendar")]
+	public async Task<ActionResult<IEnumerable<GetEventDTO>>> GetAll(string startTime, string endTime)
 	{
+		ArgumentException.ThrowIfNullOrWhiteSpace(startTime);
+		ArgumentException.ThrowIfNullOrWhiteSpace(endTime);
 		var events = await service.GetEventsAsync(startTime, endTime);
 		return Ok(events);
 	}
