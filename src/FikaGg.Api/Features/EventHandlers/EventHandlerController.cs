@@ -14,7 +14,7 @@ public class EventHandlerController(IEventHandlerService service) : ControllerBa
 	private string UserId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
 	[HttpPost("createEvent")]
-	public async Task<IActionResult> Create([FromBody] CreateEventDTO createEventDto)
+	public async Task<ActionResult<GetEventByIdDTO>> Create([FromBody] CreateEventDTO createEventDto)
 	{
 		var newEvent = await service.CreateEventAsync(createEventDto, UserId);
 
@@ -27,7 +27,7 @@ public class EventHandlerController(IEventHandlerService service) : ControllerBa
 	}
 
 	[HttpPut("updateEvent/{id:int}")]
-	public async Task<IActionResult> Update(
+	public async Task<ActionResult<GetEventByIdDTO>> Update(
 		[FromRoute] int id, [FromBody] CreateEventDTO eventDto)
 	{
 		var @event = await service.UpdateEventAsync(id, eventDto, UserId);
