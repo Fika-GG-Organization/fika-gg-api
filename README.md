@@ -52,6 +52,7 @@ The repository uses the following 3rd party dependencies.
 - Aspire
 - Scalar
 - [RAWG API](https://rawg.io/apidocs) — game data
+- Cloudinary - for user avatars/profile picture
 
 ### Secrets
 
