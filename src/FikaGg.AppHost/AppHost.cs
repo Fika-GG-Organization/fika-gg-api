@@ -15,6 +15,10 @@ var cloudinaryApiSecret = builder.AddParameter("cloudinary-api-secret", secret: 
 var api = builder.AddProject<Projects.FikaGg_Api>("api")
 	.WithReference(db)
 	.WaitFor(db)
+	.WithUrlForEndpoint("https", resource =>
+	{
+		resource.Url = "/scalar/v1";
+	})
 	.WithEnvironment("Rawg__ApiKey", rawgApiKey)
 	.WithEnvironment("Cloudinary__CloudName", cloudinaryCloudName)
 	.WithEnvironment("Cloudinary__ApiKey", cloudinaryApiKey)
