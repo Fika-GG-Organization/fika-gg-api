@@ -1,4 +1,4 @@
-# Fika GG web
+# Fika GG API
 
 ![Place any banner here]()
 
