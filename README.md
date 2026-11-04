@@ -53,6 +53,8 @@ The repository uses the following 3rd party dependencies.
 - Scalar
 - [RAWG API](https://rawg.io/apidocs) — game data
 - Cloudinary - for user avatars/profile picture
+- XUnit.v3 - Backend tests
+- NSubstitute - Testing helper
 
 ### Secrets
 
@@ -62,6 +64,10 @@ Get a free key at [rawg.io/apidocs](https://rawg.io/apidocs), then run this from
     dotnet user-secrets set "Parameters:rawg-api-key" "<your-key>" --project src/FikaGg.AppHost
 
 The key is stored locally on your machine (never in the repository) and passed to the API by Aspire on startup.
+
+---
+
+Add cloudinary here
 
 ### CLI
 
