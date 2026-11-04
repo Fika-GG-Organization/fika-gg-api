@@ -1,13 +1,6 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using FikaGg.Api.Common.Middlewares;
-using FikaGg.Api.Common.Utils;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace FikaGg.Tests.Common.Middlewares;
 

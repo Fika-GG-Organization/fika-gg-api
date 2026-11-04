@@ -3,12 +3,14 @@ using FikaGg.Api.Data;
 using FikaGg.Api.Entities;
 using FikaGg.Api.Features.Game;
 using FikaGg.Api.Features.User;
+using FikaGg.Api.Integrations.CloudinaryConfig;
 using FikaGg.Api.Integrations.Rawg;
 using FikaGg.Api.Features.EventHandlers;
 using FikaGg.Api.Features.EventViews;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using FikaGg.Api.Features.Avatars;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,7 +45,10 @@ builder.Services.AddHttpClient<IRawgClient, RawgClient>(client =>
 	client.BaseAddress = new Uri("https://api.rawg.io/");
 });
 
+builder.Services.AddCloudinary(builder.Configuration);
+
 // Scopes
+builder.Services.AddScoped<AvatarService>();
 builder.Services.AddScoped<GameService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<IEventHandlerService, EventHandlerService>();
@@ -52,6 +57,7 @@ builder.Services.AddScoped<IEventViewsService, EventViewsService>();
 // Build app
 var app = builder.Build();
 app.MapDefaultEndpoints();
+app.UseExceptionHandler(); // Will catch uncaught exceptions.
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -59,13 +65,12 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 
-    using var scope = app.Services.CreateScope();
+	using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await db.Database.MigrateAsync();
 }
 else
 {
-	app.UseExceptionHandler(); // Will catch uncaught exceptions.
 	app.UseHsts();             // Tells client browser to switch from HTTP to HTTPS.
 }
 

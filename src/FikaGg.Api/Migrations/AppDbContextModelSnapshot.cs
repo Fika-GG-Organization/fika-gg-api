@@ -30,6 +30,10 @@ namespace FikaGg.Api.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<string>("AvatarPublicId")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<string>("AvatarUrl")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
@@ -344,13 +348,13 @@ namespace FikaGg.Api.Migrations
             modelBuilder.Entity("FikaGg.Api.Entities.Event", b =>
                 {
                     b.HasOne("FikaGg.Api.Entities.Game", "Game")
-                        .WithMany()
+                        .WithMany("Events")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("FikaGg.Api.Entities.ApplicationUser", "Host")
-                        .WithMany()
+                        .WithMany("HostedEvents")
                         .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -369,7 +373,7 @@ namespace FikaGg.Api.Migrations
                         .IsRequired();
 
                     b.HasOne("FikaGg.Api.Entities.ApplicationUser", "User")
-                        .WithMany()
+                        .WithMany("JoinedEvents")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -382,13 +386,13 @@ namespace FikaGg.Api.Migrations
             modelBuilder.Entity("FikaGg.Api.Entities.UserGame", b =>
                 {
                     b.HasOne("FikaGg.Api.Entities.Game", "Game")
-                        .WithMany()
+                        .WithMany("UserGames")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("FikaGg.Api.Entities.ApplicationUser", "User")
-                        .WithMany()
+                        .WithMany("Games")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -449,9 +453,25 @@ namespace FikaGg.Api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("FikaGg.Api.Entities.ApplicationUser", b =>
+                {
+                    b.Navigation("Games");
+
+                    b.Navigation("HostedEvents");
+
+                    b.Navigation("JoinedEvents");
+                });
+
             modelBuilder.Entity("FikaGg.Api.Entities.Event", b =>
                 {
                     b.Navigation("Participants");
+                });
+
+            modelBuilder.Entity("FikaGg.Api.Entities.Game", b =>
+                {
+                    b.Navigation("Events");
+
+                    b.Navigation("UserGames");
                 });
 #pragma warning restore 612, 618
         }

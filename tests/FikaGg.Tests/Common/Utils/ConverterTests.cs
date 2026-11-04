@@ -1,5 +1,4 @@
 using FikaGg.Api.Common.Utils;
-using Xunit.Abstractions;
 
 namespace FikaGg.Tests.Common.Utils;
 

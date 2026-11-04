@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Http;
-using Xunit.Abstractions;
 
 namespace FikaGg.Tests.Common.Middlewares;
 
