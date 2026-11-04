@@ -18,12 +18,17 @@ public class EventHandlerController(IEventHandlerService service) : ControllerBa
 	{
 		var newEvent = await service.CreateEventAsync(createEventDto, UserId);
 
+		return Ok(newEvent);
+
+
+		// CreatedAtAction is BUGGED.
+
 		// CreatedAtAction returns the newly created event using our Get controller Action.
-		return CreatedAtAction(
-			actionName: nameof(EventViewsController.GetEventPage),
-			controllerName: nameof(EventViewsController),
-			routeValues: new { id = newEvent.Id },
-			value: newEvent);
+		//return CreatedAtAction(
+		//	actionName: nameof(EventViewsController.GetEventPage),
+		//	controllerName: nameof(EventViewsController),
+		//	routeValues: new { id = newEvent.Id },
+		//	value: newEvent);
 	}
 
 	[HttpPut("updateEvent/{id:int}")]
