@@ -2,12 +2,13 @@ using FikaGg.Api.Data;
 using FikaGg.Api.Entities;
 using FikaGg.Api.Features.Events;
 using FikaGg.Api.Features.Game;
+using FikaGg.Api.Features.User.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FikaGg.Api.Features.User;
 
-public class UserService
+public class UserService : IUserService
 {
 	private readonly AppDbContext _dbContext;
 	private readonly UserManager<ApplicationUser> _userManager;
@@ -99,16 +100,17 @@ public class UserService
 			AvatarUrl = null // Set a default avatar URL if needed
 		};
 
-		var existingUser = await _dbContext.Users.FindAsync(user.DisplayName);
+		var displayNameTaken = await _dbContext.Users
+		.AnyAsync(u => u.DisplayName == dto.DisplayName);
 
-		if(existingUser == null)
+		if (displayNameTaken)
 		{
 			return IdentityResult.Failed(new IdentityError
 			{
+				Code = "DuplicateDisplayName",
 				Description = "A user with this display name already exists"
 			});
 		}
-
 		var createResult = await _userManager.CreateAsync(user, dto.Password);
 
 		if(!createResult.Succeeded)
