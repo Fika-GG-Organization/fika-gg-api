@@ -18,10 +18,9 @@ public class EventViewsService(AppDbContext context) : IEventViewsService
 				e.HostId,
 				e.Title,
 				e.Description,
-				e.GameId,
+				e.Game == null ? null : new GetEventGameDTO(e.Game.Id, e.Game.RawgId, e.Game.Name, e.Game.CoverUrl),
 				e.StartTime,
 				e.EndTime,
-				(e.Game == null) ? null : e.Game.CoverUrl, // If Game is null, CoverUrl will also be null
 				e.Participants.Count,
 				e.MaxPlayers,
 				e.Participants.Select(
@@ -41,13 +40,12 @@ public class EventViewsService(AppDbContext context) : IEventViewsService
 			.Select(e => new GetEventDTO(
 
 				e.Id,
-				e.Host!.Id,
+				e.HostId,
 				e.Title,
 				e.Description,
-				(e.Game == null) ? null : e.Game.Id,
+				e.Game == null ? null : new GetEventGameDTO(e.Game.Id, e.Game.RawgId, e.Game.Name, e.Game.CoverUrl),
 				e.StartTime,
 				e.EndTime,
-				(e.Game == null) ? null : e.Game.CoverUrl,
 				e.Participants.Count(),
 				e.MaxPlayers,
 				e.CreatedAt
