@@ -8,7 +8,7 @@
 
 ## Troubleshooting
 
-- [Starting server](troubleshooting/server-startup.md) — Guide on how to start up server for testing.
+- [Starting server with Aspire](troubleshooting/server-startup.md) — Guide on how to start up server for testing.
 
 ## Development
 
