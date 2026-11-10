@@ -7,10 +7,9 @@ public record GetEventDTO(
 	string HostId,
 	string Title,
 	string? Description,
-	int? GameId,
+	GetEventGameDTO? Game,
 	DateTime StartTime,
 	DateTime EndTime,
-	string? CoverUrl,
 	int? ParticipantCount,
 	int? MaxPlayers,
 	DateTime CreatedAt
