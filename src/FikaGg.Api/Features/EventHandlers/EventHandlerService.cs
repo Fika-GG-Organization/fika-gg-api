@@ -31,7 +31,7 @@ public class EventHandlerService(AppDbContext context, IEventViewsService eventV
 		var result = await context.Events.AddAsync(new()
 		{
 			HostId = userId,
-			GameId = game.Id,
+			Game = game,
 			Title = createEventDto.Title,
 			Description = createEventDto.Description,
 			StartTime = createEventDto.StartTime,
@@ -72,7 +72,7 @@ public class EventHandlerService(AppDbContext context, IEventViewsService eventV
 			{
 				Id = eventId,
 				HostId = userId,
-				GameId = game.Id,
+				Game = game,
 				Title = updateEventDto.Title,
 				Description = updateEventDto.Description,
 				StartTime = updateEventDto.StartTime,
@@ -85,7 +85,7 @@ public class EventHandlerService(AppDbContext context, IEventViewsService eventV
 		{
 			@event.Id = eventId;
 			@event.HostId = userId;
-			@event.GameId = game.Id;
+			@event.Game = game;
 			@event.Title = updateEventDto.Title;
 			@event.Description = updateEventDto.Description;
 			@event.StartTime = updateEventDto.StartTime;
