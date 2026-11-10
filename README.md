@@ -22,44 +22,27 @@ Our main target demographic are Swedish students and young adults with an intere
 
 ### See also
 
-- [fika-gg-web](https://github.com/Fika-GG-Organization/fika-gg-web): The web client application.
+- [fika-gg-web🔗‍️](https://github.com/Fika-GG-Organization/fika-gg-web): The web client application.
 
 ## Development
 
-Monolith API, deployed to Azure Container Apps, and ran locally with Aspire
-Code is organized by feature (Vertical slice), PostgresDb. Feature-based organization with controller service architecture
+See [docs](docs/README.md) for info about project structure, tutorials, references, etc.
 
-Project structure
-
-- `FikaGG.AppHost/` Aspire
-- `FikaGG.ServiceDefaults/` telemetry, health checks, logging... etc
-- `FikaGG.Api/` ASP.NET Core web api
-- `FikaGG.Tests/` xUnit tests
-
-`FikaGG.Api` folder structure
-
-- `Features/` controllers, services, dtos, validators, etc all grouped by feature, for example features/events
-- `Common/` error handling, other common use functions/interfaces?
-- `Integrations/` external services
-- `Entities/` database entities
-- `Data/` EF Core dbcontext
-- `Migrations/` db migrations
-
-### Dependencies
+## Dependencies
 
 The repository uses the following 3rd party dependencies.
 
 - Aspire
 - Scalar
-- [RAWG API](https://rawg.io/apidocs) — game data
-- Cloudinary - for user avatars/profile picture
-- XUnit.v3 - Backend tests
-- NSubstitute - Testing helper
+- [RAWG API🔗‍️](https://rawg.io/apidocs) — game data
+- Cloudinary — for user avatars/profile picture
+- XUnit.v3 — Backend tests
+- NSubstitute — Testing helper
 
 ### Secrets
 
 The API needs a RAWG API key to search for games. 
-Get a free key at [rawg.io/apidocs](https://rawg.io/apidocs), then run this from the repository root:
+Get a free key at [rawg.io/apidocs🔗‍️](https://rawg.io/apidocs), then run this from the repository root:
 
     dotnet user-secrets set "Parameters:rawg-api-key" "<your-key>" --project src/FikaGg.AppHost
 
@@ -68,10 +51,6 @@ The key is stored locally on your machine (never in the repository) and passed t
 ---
 
 Add cloudinary here
-
-### CLI
-
-DevOps info here
 
 ## Contributing
 
