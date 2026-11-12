@@ -11,7 +11,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using FikaGg.Api.Features.Avatars;
-using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
+using Microsoft.AspNetCore.DataProtection;
+using FikaGg.Api.Features.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,12 +32,11 @@ builder.Services.AddIdentityApiEndpoints<ApplicationUser>(options =>
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-	options.Cookie.SameSite = SameSiteMode.None;
+	options.Cookie.SameSite = SameSiteMode.Lax;
 	options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
-//builder.Services.AddDataProtection()
-//	.PersistKeysToDbContext<AppDbContext>();
+builder.Services.AddDataProtection().PersistKeysToDbContext<AppDbContext>();
 
 builder.Services.AddCors(options =>
 {
@@ -61,6 +61,7 @@ builder.Services.AddCloudinary(builder.Configuration);
 builder.Services.AddScoped<AvatarService>();
 builder.Services.AddScoped<GameService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IEventHandlerService, EventHandlerService>();
 builder.Services.AddScoped<IEventViewsService, EventViewsService>();
 
