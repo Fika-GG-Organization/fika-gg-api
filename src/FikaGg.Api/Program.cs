@@ -11,13 +11,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using FikaGg.Api.Features.Avatars;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.AddServiceDefaults();
 builder.AddNpgsqlDbContext<AppDbContext>("fikaggdb");
-builder.Services.AddAuthentication(IdentityConstants.BearerScheme);
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
@@ -28,6 +28,16 @@ builder.Services.AddIdentityApiEndpoints<ApplicationUser>(options =>
 })
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+	options.Cookie.SameSite = SameSiteMode.None;
+	options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
+
+//builder.Services.AddDataProtection()
+//	.PersistKeysToDbContext<AppDbContext>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("frontend", policy =>
