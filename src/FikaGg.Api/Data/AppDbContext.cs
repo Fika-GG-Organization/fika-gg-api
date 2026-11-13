@@ -1,18 +1,21 @@
-﻿using FikaGg.Api.Entities;
+using FikaGg.Api.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 
 namespace FikaGg.Api.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options)
-    : IdentityDbContext<ApplicationUser>(options)
+	: IdentityDbContext<ApplicationUser>(options), IDataProtectionKeyContext
 {
     public DbSet<Game> Games => Set<Game>();
     public DbSet<UserGame> UserGames => Set<UserGame>();
     public DbSet<Event> Events => Set<Event>();
     public DbSet<EventParticipant> EventParticipants => Set<EventParticipant>();
+	public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
 
-    protected override void OnModelCreating(ModelBuilder builder)
+	protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 

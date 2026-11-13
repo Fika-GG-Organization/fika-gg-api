@@ -11,13 +11,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using FikaGg.Api.Features.Avatars;
+using Microsoft.AspNetCore.DataProtection;
+using FikaGg.Api.Features.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.AddServiceDefaults();
 builder.AddNpgsqlDbContext<AppDbContext>("fikaggdb");
-builder.Services.AddAuthentication(IdentityConstants.BearerScheme);
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
@@ -28,6 +29,15 @@ builder.Services.AddIdentityApiEndpoints<ApplicationUser>(options =>
 })
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+	options.Cookie.SameSite = SameSiteMode.Lax;
+	options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
+
+builder.Services.AddDataProtection().PersistKeysToDbContext<AppDbContext>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("frontend", policy =>
@@ -51,6 +61,7 @@ builder.Services.AddCloudinary(builder.Configuration);
 builder.Services.AddScoped<AvatarService>();
 builder.Services.AddScoped<GameService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IEventHandlerService, EventHandlerService>();
 builder.Services.AddScoped<IEventViewsService, EventViewsService>();
 
