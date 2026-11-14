@@ -12,4 +12,15 @@ public class RawgClient(HttpClient http, IConfiguration config) : IRawgClient
 
 		return response?.Results ?? [];
 	}
+
+	public async Task<RawgGame> GetGameDetailsAsync(int gameId)
+	{
+		var apiKey = config["Rawg:ApiKey"]
+			?? throw new InvalidOperationException("Rawg:ApiKey is missing");
+
+		var url = $"api/games/{gameId}?key={apiKey}";
+		var game = await http.GetFromJsonAsync<RawgGame>(url);
+
+		return game;
+	}
 }

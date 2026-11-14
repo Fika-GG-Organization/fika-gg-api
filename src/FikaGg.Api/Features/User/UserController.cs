@@ -54,4 +54,25 @@ public class UserController(UserService userService) : ControllerBase
 
 		return Ok();
 	}
+
+	[Authorize]
+	[HttpPost("add/game/{gameId}")]
+	public async Task<ActionResult> AddGameToUser([FromRoute] int gameId)
+	{
+		var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+		if (string.IsNullOrEmpty(userId))
+		{
+			return Unauthorized();
+		}
+		
+		try 
+		{
+			await userService.AddGameToUserAsync(userId, gameId);
+			return Ok();
+		}
+		catch (InvalidOperationException ex)
+		{
+			return BadRequest(ex.Message);
+		}
+	}
 }
