@@ -21,6 +21,6 @@ public class RawgClient(HttpClient http, IConfiguration config) : IRawgClient
 		var url = $"api/games/{gameId}?key={apiKey}";
 		var game = await http.GetFromJsonAsync<RawgGame>(url);
 
-		return game;
+		return game ?? throw new KeyNotFoundException($"Game with ID {gameId} was not found.");
 	}
 }

@@ -57,7 +57,7 @@ public class UserController(UserService userService) : ControllerBase
 
 	[Authorize]
 	[HttpPost("add/game/{gameId}")]
-	public async Task<ActionResult> AddGameToUser([FromRoute] int gameId)
+	public async Task<ActionResult> AddGameToUser([FromRoute] int rawgId)
 	{
 		var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 		if (string.IsNullOrEmpty(userId))
@@ -67,7 +67,7 @@ public class UserController(UserService userService) : ControllerBase
 		
 		try 
 		{
-			await userService.AddGameToUserAsync(userId, gameId);
+			await userService.AddGameToUserAsync(userId, rawgId);
 			return Ok();
 		}
 		catch (InvalidOperationException ex)

@@ -35,7 +35,7 @@ public class UserService : IUserService
 			   .AsNoTracking()
 			   .Where(e => e.UserId == userId)
 			   .Select(e => new EventGetDTO(
-				   e.Event.Id,
+				   e.EventId,
 				   e.Event.Title,
 				   e.Event.StartTime,
 				   e.Event.EndTime,
@@ -65,7 +65,7 @@ public class UserService : IUserService
 				.AsNoTracking()
 				.Where(g => g.UserId == userId)
 				.Select(g => new GameSearchResultDTO(
-					g.Game.RawgId ?? 0,
+					g.Game.RawgId,
 					g.Game.Name,
 					g.Game.CoverUrl
 				))
