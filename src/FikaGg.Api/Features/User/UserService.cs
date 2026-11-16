@@ -121,4 +121,17 @@ public class UserService : IUserService
 		return IdentityResult.Success;
 	}
 
+	public async Task<CurrentUserDTO?> GetCurrentUserAsync(string userId)
+	{
+		return await _dbContext.Users
+			.AsNoTracking()
+			.Where(u => u.Id == userId)
+			.Select(u => new CurrentUserDTO(
+				u.Id,
+				u.Email!,
+				u.DisplayName,
+				u.AvatarUrl
+			))
+			.FirstOrDefaultAsync();
+	}
 }
