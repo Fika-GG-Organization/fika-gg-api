@@ -38,6 +38,10 @@ public class EventHandlerService(AppDbContext context, IEventViewsService eventV
 			EndTime = createEventDto.EndTime,
 			MaxPlayers = createEventDto.MaxPlayers,
 			CreatedAt = createEventDto.CreatedAt,
+			Participants =
+			[
+				new() { UserId = userId, Status = ParticipantStatus.Joined, JoinedAt = DateTime.UtcNow},
+			]
 		});
 
 		await context.SaveChangesAsync();
