@@ -57,7 +57,7 @@ public class UserController(UserService userService) : ControllerBase
 
 	// Endpoint is strictly for authentication purposes
 	[HttpGet("me")]
-	public async Task<ActionResult<CurrentUserDTO>> GetMe()
+	public async Task<ActionResult<AuthUserDTO>> GetMe()
 	{
 		var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -65,7 +65,7 @@ public class UserController(UserService userService) : ControllerBase
 		{
 			return Unauthorized();
 		}
-		var user = await userService.GetCurrentUserAsync(userId);
+		var user = await userService.GetAuthUserAsync(userId);
 
 		return user is null ? Unauthorized() : Ok(user);
 	}

@@ -121,12 +121,12 @@ public class UserService : IUserService
 		return IdentityResult.Success;
 	}
 
-	public async Task<CurrentUserDTO?> GetCurrentUserAsync(string userId)
+	public async Task<AuthUserDTO?> GetAuthUserAsync(string userId)
 	{
 		return await _dbContext.Users
 			.AsNoTracking()
 			.Where(u => u.Id == userId)
-			.Select(u => new CurrentUserDTO(
+			.Select(u => new AuthUserDTO(
 				u.Id,
 				u.Email!,
 				u.DisplayName,
