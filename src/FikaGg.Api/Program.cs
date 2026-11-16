@@ -85,10 +85,13 @@ else
 	app.UseHsts(); // Tells client browser to switch from HTTP to HTTPS.
 }
 
+app.UseHttpsRedirection();
+app.UseCors("frontend");
+
 // Prevents using Identity's built in register endpoint
 app.Use(async (context, next) =>
 {
-	if (context.Request.Path.Equals("/api/auth/register", StringComparison.OrdinalIgnoreCase))
+	if (context.Request.Path.StartsWithSegments("/api/auth/register", StringComparison.OrdinalIgnoreCase))
 	{
 		context.Response.StatusCode = StatusCodes.Status403Forbidden;
 		return;
@@ -96,8 +99,6 @@ app.Use(async (context, next) =>
 	await next();
 });
 
-app.UseHttpsRedirection();
-app.UseCors("frontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapGroup("/api/auth").MapIdentityApi<ApplicationUser>();
