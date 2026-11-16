@@ -10,6 +10,4 @@ public record UserDataDTO(
 	List<EventGetDTO> UserEvents,
 	List<EventGetDTO> HostedEvents,
 	List<GameSearchResultDTO> OwnedGames
-
 );
-
