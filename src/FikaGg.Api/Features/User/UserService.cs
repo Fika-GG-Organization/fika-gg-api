@@ -63,6 +63,7 @@ public class UserService : IUserService
 
 		var UserGames = await _dbContext.UserGames
 				.AsNoTracking()
+				.Include(g => g.Game)
 				.Where(g => g.UserId == userId)
 				.Select(g => new GameSearchResultDTO(
 					g.Game!.RawgId,
