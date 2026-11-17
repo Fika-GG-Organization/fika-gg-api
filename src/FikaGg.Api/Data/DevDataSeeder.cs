@@ -124,6 +124,19 @@ public static class DevDataSeeder
 			});
 		}
 
+		// everyone gets 2-4 random games so the profile page isnt empty
+		foreach (var user in users)
+		{
+			var owned = games
+				.OrderBy(_ => random.Next())
+				.Take(random.Next(2, 5));
+
+			foreach (var game in owned)
+			{
+				db.UserGames.Add(new UserGame { UserId = user.Id, Game = game });
+			}
+		}
+
 		await db.SaveChangesAsync();
 	}
 
