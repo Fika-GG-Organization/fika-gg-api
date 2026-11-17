@@ -2,9 +2,12 @@ using FikaGg.Api.Data;
 using FikaGg.Api.Entities;
 using FikaGg.Api.Features.User;
 using FikaGg.Api.Features.User.Interfaces;
+using FikaGg.Api.Integrations.Rawg;
+using FikaGg.Tests;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
+using static FikaGg.Tests.GetGameDetailsAsyncTests;
 
 namespace FikaGg.Tests.Features.User;
 public class UserServiceTests
@@ -22,7 +25,7 @@ public class UserServiceTests
 			.Options;
 
 		_dbContext = new AppDbContext(options);
-		_userService = new UserService(_dbContext, _userManager);
+		_userService = new UserService(_dbContext, _userManager, new FakeRawgClient());
 	}
 
 	public RegisterUserDTO Generate_New_RegisterUserDTO()
