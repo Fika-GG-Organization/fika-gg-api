@@ -27,5 +27,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         builder.Entity<EventParticipant>()
             .Property(p => p.Status)
             .HasConversion<string>();
-    }
+
+		builder.Entity<ApplicationUser>()
+			.HasIndex(au => au.DisplayName)
+			.IsUnique();
+
+	}
 }
