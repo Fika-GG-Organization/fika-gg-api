@@ -32,8 +32,18 @@ builder.Services.AddIdentityApiEndpoints<ApplicationUser>(options =>
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-	options.Cookie.SameSite = SameSiteMode.Lax;
 	options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
+	if (builder.Environment.IsDevelopment())
+	{
+		// Local development
+		options.Cookie.SameSite = SameSiteMode.Lax;
+	}
+	else
+	{
+		// Production
+		options.Cookie.SameSite = SameSiteMode.None;
+	}
 });
 
 builder.Services.AddDataProtection().PersistKeysToDbContext<AppDbContext>();
