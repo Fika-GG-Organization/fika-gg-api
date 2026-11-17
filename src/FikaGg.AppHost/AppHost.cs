@@ -11,6 +11,7 @@ var rawgApiKey = builder.AddParameter("rawg-api-key", secret: true);
 var cloudinaryCloudName = builder.AddParameter("cloudinary-cloud-name");
 var cloudinaryApiKey = builder.AddParameter("cloudinary-api-key", secret: true);
 var cloudinaryApiSecret = builder.AddParameter("cloudinary-api-secret", secret: true);
+var seedPassword = builder.AddParameter("seed-password", secret: true);
 
 var api = builder.AddProject<Projects.FikaGg_Api>("api")
 	.WithReference(db)
@@ -22,7 +23,10 @@ var api = builder.AddProject<Projects.FikaGg_Api>("api")
 	.WithEnvironment("Rawg__ApiKey", rawgApiKey)
 	.WithEnvironment("Cloudinary__CloudName", cloudinaryCloudName)
 	.WithEnvironment("Cloudinary__ApiKey", cloudinaryApiKey)
-	.WithEnvironment("Cloudinary__ApiSecret", cloudinaryApiSecret);
+	.WithEnvironment("Cloudinary__ApiSecret", cloudinaryApiSecret)
+	.WithEnvironment("Seed__Password", seedPassword)
+	// dotnet run ... -- --reseed=true wipes the local db and seeds it again
+	.WithEnvironment("Seed__Reset", builder.Configuration["reseed"] ?? "false");
 
 builder.AddJavaScriptApp("frontend", "../../../fika-gg-web", "dev")
 	   .WithReference(api)
