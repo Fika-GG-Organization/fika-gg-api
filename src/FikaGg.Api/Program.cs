@@ -78,7 +78,15 @@ if (app.Environment.IsDevelopment())
 
 	using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+	if (app.Configuration.GetValue<bool>("Seed:Reset"))
+	{
+		// wipes your local db, only when the command is called
+		await db.Database.EnsureDeletedAsync();
+	}
+
     await db.Database.MigrateAsync();
+	await DevDataSeeder.SeedAsync(scope.ServiceProvider, app.Configuration);
 }
 else
 {
