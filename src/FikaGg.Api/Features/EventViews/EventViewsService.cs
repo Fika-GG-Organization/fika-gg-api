@@ -24,7 +24,7 @@ public class EventViewsService(AppDbContext context) : IEventViewsService
 				e.Participants.Count,
 				e.MaxPlayers,
 				e.Participants.Select(
-					p => new GetEventParticipantDTO(p.EventId, p.UserId, p.Status, p.JoinedAt)).ToList(),
+					p => new GetEventParticipantDTO(p.EventId, p.UserId, p.User!.DisplayName, p.User.AvatarUrl, p.Status, p.JoinedAt)).ToList(),
 				e.CreatedAt)
 			)
 			.FirstOrDefaultAsync();
