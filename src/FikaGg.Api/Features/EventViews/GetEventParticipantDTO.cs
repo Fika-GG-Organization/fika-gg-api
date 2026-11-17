@@ -7,6 +7,8 @@ namespace FikaGg.Api.Features.EventViews;
 public record GetEventParticipantDTO(
 	[Required] int EventId,
 	[Required] string UserId,
+	[Required] string DisplayName,
+	string? AvatarUrl,
 	ParticipantStatus Status,
 	[Required] DateTime JoinedAt
 );
