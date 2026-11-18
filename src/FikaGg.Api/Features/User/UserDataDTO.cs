@@ -9,5 +9,5 @@ public record UserDataDTO(
 	string? AvatarUrl,
 	List<EventGetDTO> UserEvents,
 	List<EventGetDTO> HostedEvents,
-	List<GameSearchResultDTO> OwnedGames
+	List<UserGameDTO> OwnedGames
 );
