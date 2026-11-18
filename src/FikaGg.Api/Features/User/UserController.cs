@@ -101,9 +101,16 @@ public class UserController(UserService userService) : ControllerBase
 		{
 			return Unauthorized();
 		}
+		try
+		{
+			await userService.DeleteUser(userId);
+			return Ok();
+		}
+		catch (InvalidOperationException ex)
+		{
+			return BadRequest(ex.Message);
+		}
 
-		await userService.DeleteUser(userId);
-		return Ok();
 	}
 	[HttpPut("update/game/{gameId:int}")]
 	public async Task<ActionResult> UpdateGamerTag([FromRoute] int gameId, [FromBody] UpdateGamerTagDTO dto)
@@ -112,15 +119,6 @@ public class UserController(UserService userService) : ControllerBase
 		if (string.IsNullOrEmpty(userId))
 		{
 			return Unauthorized();
-		}
-		try
-		{
-			await userService.DeleteUser(userId);
-			return Ok();
-		}
-		catch(InvalidOperationException ex)
-		{
-			return BadRequest(ex.Message);
 		}
 
 		await userService.UpdateGamerTagAsync(userId, gameId, dto.GamerTag);
