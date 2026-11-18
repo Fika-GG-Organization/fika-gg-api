@@ -6,6 +6,7 @@ using FikaGg.Api.Features.User.Interfaces;
 using FikaGg.Api.Integrations.Rawg;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata.Ecma335;
 
 
 namespace FikaGg.Api.Features.User;
@@ -187,5 +188,21 @@ public class UserService : IUserService
 				u.AvatarUrl
 			))
 			.FirstOrDefaultAsync();
+	}
+
+	public async Task<IdentityResult> DeleteUser(string userId)
+	{
+		var found = await _userManager.FindByIdAsync(userId);
+
+		if(found == null)
+		{
+			return IdentityResult.Failed(new IdentityError
+			{
+				Code = "UserNotFound",
+				Description = "User not found"
+			});
+		}
+
+		return await _userManager.DeleteAsync(found);
 	}
 }
