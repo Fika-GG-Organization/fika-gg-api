@@ -90,4 +90,25 @@ public class UserController(UserService userService) : ControllerBase
 
 		return user is null ? Unauthorized() : Ok(user);
 	}
+
+	// Endpoint will run delete user that deletes the account and all associated data.
+	[Authorize]
+	[HttpDelete("delete")]
+	public async Task<ActionResult> DeleteUserAccount()
+	{
+		var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+		if (string.IsNullOrEmpty(userId))
+		{
+			return Unauthorized();
+		}
+		try
+		{
+			var result = await userService.DeleteUser(userId);
+			return Ok();
+		}
+		catch(InvalidOperationException ex)
+		{
+			return BadRequest(ex.Message);
+		}
+	}
 }
