@@ -185,4 +185,51 @@ public class UserServiceTests
 		Assert.True(await _dbContext.Users.AnyAsync(u => u.Id == guest.Id));
 		Assert.True(await _dbContext.Games.AnyAsync(g => g.Id == game.Id));
 	}
+
+	// Fadi: checks if the gamertag gets saved and trimmed
+	[Fact]
+	public async Task UpdateGamerTagAsync_OwnedGame_SetsTrimmedTag()
+	{
+		_dbContext.UserGames.Add(new UserGame { UserId = "u1", GameId = 1 });
+		await _dbContext.SaveChangesAsync();
+
+		await _userService.UpdateGamerTagAsync("u1", 1, " alexk#EUW ");
+
+		var userGame = await _dbContext.UserGames.SingleAsync();
+		Assert.Equal("alexk#EUW", userGame.GamerTag);
+	}
+
+	// Fadi: checks if an empty gamer tag sets the value to null.
+	[Fact]
+	public async Task UpdateGamerTagAsync_EmptyTag_SetsNull()
+	{
+		_dbContext.UserGames.Add(new UserGame { UserId = "u1", GameId = 1, GamerTag = "alexk#EUW" });
+		await _dbContext.SaveChangesAsync();
+
+		await _userService.UpdateGamerTagAsync("u1", 1, "");
+
+		Assert.Null((await _dbContext.UserGames.SingleAsync()).GamerTag);
+	}
+
+	// Fadi: checks if removing a game only removes it from the users games
+	[Fact]
+	public async Task RemoveGameFromUserAsync_OwnedGame_RemovesIt()
+	{
+		_dbContext.UserGames.Add(new UserGame { UserId = "u1", GameId = 1 });
+		await _dbContext.SaveChangesAsync();
+
+		await _userService.RemoveGameFromUserAsync("u1", 1);
+
+		Assert.Empty(_dbContext.UserGames);
+	}
+
+	// Fadi: checks if removing someone elses game throws instead of removing it
+	[Fact] 
+	public async Task RemoveGameFromUserAsync_SomeoneElsesGame_Throws()
+	{
+		_dbContext.UserGames.Add(new UserGame { UserId = "u2", GameId = 1 });
+		await _dbContext.SaveChangesAsync();
+
+		await Assert.ThrowsAsync<KeyNotFoundException>(() => _userService.RemoveGameFromUserAsync("u1", 1));
+	}
 }

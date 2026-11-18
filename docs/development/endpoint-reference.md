@@ -18,6 +18,9 @@ Each model/DTO are sent as JSON format.
     - [Change password while logged in](#change-password-while-logged-in)
 - [Game endpoints](#game-endpoints)
     - [Search games](#search-games)
+- [User endpoints](#user-endpoints)
+    - [Update gamertag](#update-gamertag)
+    - [Remove game from user](#remove-game-from-user)
 - [X endpoints](#x-endpoints)
 
 ## Contribute
@@ -366,5 +369,86 @@ GET `api/games/search`
 - 401 Unauthorized
 
     No Body
+
+## User endpoints
+
+### Update gamertag
+
+Logged in client changes the gamertag on one of their own games. 
+An empty string or `null` removes the gamertag.
+
+#### Request
+
+PUT `api/user/update/game/{gameId}`
+
+- Route Parameter
+    - `gameId` int, the games id in our database (`gameId` in `ownedGames`, not `rawgId`)
+
+- Body
+
+    ```json
+    {
+      "gamerTag": null | ""
+    }
+    ```
+
+#### Response
+
+- 204 No Content
+
+    No Body
+
+- 400 Bad Request
+
+    `gamerTag` is longer than 50 characters.
+
+    ```json
+    {
+      "type": null | "",
+      "title": null | "",
+      "status": null | "" | 1,
+      "detail": null | "",
+      "instance": null | "",
+      "errors": {
+        "additionalProperty": [
+          ""
+        ]
+      }
+    }
+    ```
+
+- 401 Unauthorized
+
+    No Body
+
+- 404 Not Found
+
+    The user doesnt have a game with that `gameId`.
+
+### Remove game from user
+
+Logged in client removes one of their games from their profile. 
+Only the link to the user is removed, the game itself stays in the database.
+
+#### Request
+
+DELETE `api/user/remove/game/{gameId}`
+
+- Route Parameter
+    - `gameId` int, the games id in our database (`gameId` in `ownedGames`, not `rawgId`)
+
+#### Response
+
+- 204 No Content
+
+    No Body
+
+- 401 Unauthorized
+
+    No Body
+
+- 404 Not Found
+
+    The user doesnt have a game with that `gameId`.
 
 ## X endpoints

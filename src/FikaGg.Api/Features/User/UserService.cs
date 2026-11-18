@@ -64,12 +64,13 @@ public class UserService : IUserService
 
 		var UserGames = await _dbContext.UserGames
 				.AsNoTracking()
-				.Include(g => g.Game)
 				.Where(g => g.UserId == userId)
-				.Select(g => new GameSearchResultDTO(
+				.Select(g => new UserGameDTO(
+					g.GameId,
 					g.Game!.RawgId,
-					g.Game!.Name,
-					g.Game!.CoverUrl
+					g.Game.Name,
+					g.Game!.CoverUrl,
+					g.GamerTag
 				))
 				.ToListAsync();
 
@@ -204,5 +205,32 @@ public class UserService : IUserService
 		}
 
 		return await _userManager.DeleteAsync(found);
+	public async Task UpdateGamerTagAsync(string userId, int gameId, string? gamerTag)
+	{
+		var userGame = await _dbContext.UserGames
+			.FirstOrDefaultAsync(ug => ug.UserId == userId && ug.GameId == gameId);
+
+		if (userGame == null)
+		{
+			throw new KeyNotFoundException("User does not have this game");
+		}
+
+		userGame.GamerTag = string.IsNullOrWhiteSpace(gamerTag) ? null : gamerTag.Trim();
+		await _dbContext.SaveChangesAsync();
+	}
+
+	public async Task RemoveGameFromUserAsync(string userId, int gameId)
+	{
+		var userGame = await _dbContext.UserGames
+			.FirstOrDefaultAsync(ug => ug.UserId == userId && ug.GameId == gameId);
+
+		if (userGame == null)
+		{
+			throw new KeyNotFoundException("User does not have this game");
+		}
+
+		// removes it from the user, but keeps it as a game entity.
+		_dbContext.UserGames.Remove(userGame);
+		await _dbContext.SaveChangesAsync();
 	}
 }
