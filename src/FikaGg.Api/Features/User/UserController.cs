@@ -95,6 +95,16 @@ public class UserController(UserService userService) : ControllerBase
 	[Authorize]
 	[HttpDelete("delete")]
 	public async Task<ActionResult> DeleteUserAccount()
+	{
+		var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+		if (string.IsNullOrEmpty(userId))
+		{
+			return Unauthorized();
+		}
+
+		await userService.DeleteUser(userId);
+		return Ok();
+	}
 	[HttpPut("update/game/{gameId:int}")]
 	public async Task<ActionResult> UpdateGamerTag([FromRoute] int gameId, [FromBody] UpdateGamerTagDTO dto)
 	{

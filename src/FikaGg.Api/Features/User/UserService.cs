@@ -195,7 +195,7 @@ public class UserService : IUserService
 	{
 		var found = await _userManager.FindByIdAsync(userId);
 
-		if(found == null)
+		if (found == null)
 		{
 			return IdentityResult.Failed(new IdentityError
 			{
@@ -205,6 +205,7 @@ public class UserService : IUserService
 		}
 
 		return await _userManager.DeleteAsync(found);
+	}
 	public async Task UpdateGamerTagAsync(string userId, int gameId, string? gamerTag)
 	{
 		var userGame = await _dbContext.UserGames
