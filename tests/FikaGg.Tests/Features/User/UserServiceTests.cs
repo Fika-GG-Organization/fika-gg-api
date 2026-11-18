@@ -149,6 +149,7 @@ public class UserServiceTests
 	[Fact]
 	public async Task DeleteUser_RemovesTheirGamesParticipationsAndHostedEvents()
 	{
+		// Arrange
 		var host = await CreateUserAsync("Host", "host@example.com");
 		var guest = await CreateUserAsync("Guest", "guest@example.com");
 		var game = new Game { RawgId = 1, Name = "Test", CoverUrl = "x" };
@@ -173,8 +174,10 @@ public class UserServiceTests
 		_dbContext.EventParticipants.Add(new EventParticipant { EventId = ev.Id, UserId = guest.Id });
 		await _dbContext.SaveChangesAsync();
 
+		// Act
 		var result = await _userService.DeleteUser(host.Id);
 
+		// Assert
 		Assert.True(result.Succeeded);
 		Assert.False(await _dbContext.UserGames.AnyAsync(ug => ug.UserId == host.Id));
 		Assert.False(await _dbContext.Events.AnyAsync(e => e.Id == ev.Id));

@@ -103,7 +103,7 @@ public class UserController(UserService userService) : ControllerBase
 		}
 		try
 		{
-			var result = await userService.DeleteUser(userId);
+			await userService.DeleteUser(userId);
 			return Ok();
 		}
 		catch(InvalidOperationException ex)
