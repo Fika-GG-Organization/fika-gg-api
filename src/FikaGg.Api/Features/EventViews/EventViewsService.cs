@@ -37,10 +37,10 @@ public class EventViewsService(AppDbContext context) : IEventViewsService
 		var events = await context.Events
 			.AsNoTracking()
 			.Where(e => e.StartTime >= Converter.DateConverter(startDate) && e.StartTime <= Converter.DateConverter(endDate))
+			.Include(e => e.Host)
 			.Select(e => new GetEventDTO(
-
 				e.Id,
-				e.HostId,
+				e.Host == null ? null : new GetEventHostDTO(e.Host.Id, e.Host.DisplayName, e.Host.AvatarUrl),
 				e.Title,
 				e.Description,
 				e.Game == null ? null : new GetEventGameDTO(e.Game.Id, e.Game.RawgId, e.Game.Name, e.Game.CoverUrl),
