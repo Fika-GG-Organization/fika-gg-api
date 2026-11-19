@@ -1,5 +1,6 @@
 using FikaGg.Api.Features.Game;
 using FikaGg.Api.Integrations.Rawg;
+using static FikaGg.Tests.GetGameDetailsAsyncTests;
 
 namespace FikaGg.Tests;
 
@@ -46,16 +47,44 @@ public class GameServiceTests
 	}
 }
 
-public class FakeRawgClient : IRawgClient
+public class GetGameDetailsAsyncTests
 {
-	public List<RawgGame> GamesToReturn { get; set; } = [];
-	public int CallCount { get; private set; }
-	public string? LastQuery { get; private set; }
-
-	public Task<List<RawgGame>> SearchGamesAsync(string query)
+	[Fact]
+	public async Task GetGameDetailsAsync_ReturnsGameDetails()
 	{
-		CallCount++;
-		LastQuery = query;
-		return Task.FromResult(GamesToReturn);
+		var fakeClient = new FakeRawgClient { GameToReturn = new RawgGame(1, "Valorant", "https://media.rawg.io/valorant.jpg") };
+		var result = await fakeClient.GetGameDetailsAsync(1);
+		Assert.Equal(1, result.Id);
+		Assert.Equal("Valorant", result.Name);
+	}
+
+	[Fact]
+	public async Task GetGameDetailsAsync_GameNotFound_Throws()
+	{
+		var fakeClient = new FakeRawgClient { GameToReturn = null };
+		await Assert.ThrowsAsync<KeyNotFoundException>(() => fakeClient.GetGameDetailsAsync(99));
+	}
+
+	public class FakeRawgClient : IRawgClient
+	{
+		public List<RawgGame> GamesToReturn { get; set; } = [];
+		public int CallCount { get; private set; }
+		public string? LastQuery { get; private set; }
+		public RawgGame? GameToReturn { get; set; }
+
+
+		public Task<List<RawgGame>> SearchGamesAsync(string query)
+		{
+			CallCount++;
+			LastQuery = query;
+			return Task.FromResult(GamesToReturn);
+		}
+
+		public Task<RawgGame> GetGameDetailsAsync(int gameId)
+		{
+			if (GameToReturn == null)
+				throw new KeyNotFoundException($"Game with ID {gameId} was not found.");
+			return Task.FromResult(GameToReturn);
+		}
 	}
 }

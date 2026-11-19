@@ -32,21 +32,39 @@ builder.Services.AddIdentityApiEndpoints<ApplicationUser>(options =>
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-	options.Cookie.SameSite = SameSiteMode.Lax;
 	options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
+	if (builder.Environment.IsDevelopment())
+	{
+		// Local development
+		options.Cookie.SameSite = SameSiteMode.Lax;
+	}
+	else
+	{
+		// Production
+		options.Cookie.SameSite = SameSiteMode.None;
+	}
 });
 
 builder.Services.AddDataProtection().PersistKeysToDbContext<AppDbContext>();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("frontend", policy =>
-    {
-        policy.WithOrigins(builder.Configuration["frontend"]??"http://localhost:5173", "http://localhost:3000")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
-    });
+	options.AddPolicy("frontend", policy =>
+	{
+		if (builder.Environment.IsDevelopment())
+		{
+			policy.WithOrigins("http://localhost:5173", "http://localhost:3000");
+		}
+		else
+		{
+			policy.WithOrigins(builder.Configuration["frontend"]!);
+		}
+
+		policy.AllowAnyHeader()
+		.AllowAnyMethod()
+		.AllowCredentials();
+	});
 });
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -71,22 +89,31 @@ app.MapDefaultEndpoints();
 app.UseExceptionHandler(); // Will catch uncaught exceptions.
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+
+using (var scope = app.Services.CreateScope())
 {
-    app.MapOpenApi();
-    app.MapScalarApiReference();
+	var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-	using var scope = app.Services.CreateScope();
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-	if (app.Configuration.GetValue<bool>("Seed:Reset"))
+	if (app.Environment.IsDevelopment() && app.Configuration.GetValue<bool>("Seed:Reset"))
 	{
 		// wipes your local db, only when the command is called
 		await db.Database.EnsureDeletedAsync();
 	}
 
-    await db.Database.MigrateAsync();
-	await DevDataSeeder.SeedAsync(scope.ServiceProvider, app.Configuration);
+	await db.Database.MigrateAsync();
+
+	if (app.Environment.IsDevelopment())
+	{
+		await DevDataSeeder.SeedAsync(scope.ServiceProvider, app.Configuration);
+	}
+}
+
+if (app.Environment.IsDevelopment())
+{
+	app.MapOpenApi();
+	app.MapScalarApiReference();
+
+	using var scope = app.Services.CreateScope();
 }
 else
 {

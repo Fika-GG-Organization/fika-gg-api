@@ -25,7 +25,7 @@ public class UserController(UserService userService) : ControllerBase
 	[Authorize]
 	public async Task<ActionResult<UserDataDTO>> GetCurrentUserData()
 	{
-		
+
 		var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
 		if (string.IsNullOrEmpty(userId))
@@ -41,7 +41,7 @@ public class UserController(UserService userService) : ControllerBase
 	[HttpPost("register")]
 	public async Task<ActionResult<UserDataDTO>> RegisterUser([FromBody] RegisterUserDTO dto)
 	{
-		if(!ModelState.IsValid)
+		if (!ModelState.IsValid)
 		{
 			return BadRequest(ModelState);
 		}
@@ -53,6 +53,27 @@ public class UserController(UserService userService) : ControllerBase
 		}
 
 		return Ok();
+	}
+
+	[Authorize]
+	[HttpPost("add/game/{gameId}")]
+	public async Task<ActionResult> AddGameToUser([FromRoute] int gameId)
+	{
+		var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+		if (string.IsNullOrEmpty(userId))
+		{
+			return Unauthorized();
+		}
+
+		try
+		{
+			await userService.AddGameToUserAsync(userId, gameId);
+			return Ok();
+		}
+		catch (InvalidOperationException ex)
+		{
+			return BadRequest(ex.Message);
+		}
 	}
 
 	// Endpoint is strictly for authentication purposes
@@ -68,5 +89,52 @@ public class UserController(UserService userService) : ControllerBase
 		var user = await userService.GetAuthUserAsync(userId);
 
 		return user is null ? Unauthorized() : Ok(user);
+	}
+
+	// Endpoint will run delete user that deletes the account and all associated data.
+	[Authorize]
+	[HttpDelete("delete")]
+	public async Task<ActionResult> DeleteUserAccount()
+	{
+		var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+		if (string.IsNullOrEmpty(userId))
+		{
+			return Unauthorized();
+		}
+		try
+		{
+			await userService.DeleteUser(userId);
+			return Ok();
+		}
+		catch (InvalidOperationException ex)
+		{
+			return BadRequest(ex.Message);
+		}
+
+	}
+	[HttpPut("update/game/{gameId:int}")]
+	public async Task<ActionResult> UpdateGamerTag([FromRoute] int gameId, [FromBody] UpdateGamerTagDTO dto)
+	{
+		var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+		if (string.IsNullOrEmpty(userId))
+		{
+			return Unauthorized();
+		}
+
+		await userService.UpdateGamerTagAsync(userId, gameId, dto.GamerTag);
+		return NoContent();
+	}
+
+	[HttpDelete("remove/game/{gameId:int}")]
+	public async Task<ActionResult> RemoveGameFromUser([FromRoute] int gameId)
+	{
+		var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+		if (string.IsNullOrEmpty(userId))
+		{
+			return Unauthorized();
+		}
+
+		await userService.RemoveGameFromUserAsync(userId, gameId);
+		return NoContent();
 	}
 }

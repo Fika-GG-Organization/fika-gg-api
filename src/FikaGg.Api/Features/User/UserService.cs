@@ -3,8 +3,11 @@ using FikaGg.Api.Entities;
 using FikaGg.Api.Features.Events;
 using FikaGg.Api.Features.Game;
 using FikaGg.Api.Features.User.Interfaces;
+using FikaGg.Api.Integrations.Rawg;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata.Ecma335;
+
 
 namespace FikaGg.Api.Features.User;
 
@@ -12,11 +15,13 @@ public class UserService : IUserService
 {
 	private readonly AppDbContext _dbContext;
 	private readonly UserManager<ApplicationUser> _userManager;
+	private readonly IRawgClient _rawgClient;
 
-	public UserService(AppDbContext dbContext, UserManager<ApplicationUser> userManager)
+	public UserService(AppDbContext dbContext, UserManager<ApplicationUser> userManager, IRawgClient rawgClient)
 	{
 		_dbContext = dbContext;
 		_userManager = userManager;
+		_rawgClient = rawgClient;
 	}
 
 	public async Task<UserDataDTO> GetUserAsync(string userId)
@@ -31,8 +36,8 @@ public class UserService : IUserService
 			   .AsNoTracking()
 			   .Where(e => e.UserId == userId)
 			   .Select(e => new EventGetDTO(
-				   e.Event.Id,
-				   e.Event.Title,
+				   e.EventId,
+				   e.Event!.Title,
 				   e.Event.StartTime,
 				   e.Event.EndTime,
 				   e.Event.Description,
@@ -60,10 +65,12 @@ public class UserService : IUserService
 		var UserGames = await _dbContext.UserGames
 				.AsNoTracking()
 				.Where(g => g.UserId == userId)
-				.Select(g => new GameSearchResultDTO(
-					g.Game.RawgId ?? 0,
+				.Select(g => new UserGameDTO(
+					g.GameId,
+					g.Game!.RawgId,
 					g.Game.Name,
-					g.Game.CoverUrl
+					g.Game!.CoverUrl,
+					g.GamerTag
 				))
 				.ToListAsync();
 
@@ -85,7 +92,7 @@ public class UserService : IUserService
 	/// <returns></returns>
 	public async Task<IdentityResult> RegisterUserAsync(RegisterUserDTO dto)
 	{
-		if(dto == null)
+		if (dto == null)
 		{
 			return IdentityResult.Failed(new IdentityError
 			{
@@ -113,7 +120,7 @@ public class UserService : IUserService
 		}
 		var createResult = await _userManager.CreateAsync(user, dto.Password);
 
-		if(!createResult.Succeeded)
+		if (!createResult.Succeeded)
 		{
 			return IdentityResult.Failed(createResult.Errors.ToArray());
 		}
@@ -121,6 +128,55 @@ public class UserService : IUserService
 		return IdentityResult.Success;
 	}
 
+	public async Task AddGameToUserAsync(string userId, int gameRawgId)
+	{
+		var user = await _dbContext.Users.FindAsync(userId);
+		if (user == null)
+		{
+			throw new InvalidOperationException("User not found");
+		}
+
+		var game = await _dbContext.Games.FirstOrDefaultAsync(g => g.RawgId == gameRawgId);
+
+		if (game == null)
+		{
+			var rawgGameDetails = await _rawgClient.GetGameDetailsAsync(gameRawgId);
+			if (rawgGameDetails == null)
+			{
+				throw new InvalidOperationException("Game not found on RAWG");
+			}
+
+			game = new Entities.Game
+			{
+				RawgId = rawgGameDetails.Id,
+				Name = rawgGameDetails.Name,
+				CoverUrl = rawgGameDetails.BackgroundImage
+			};
+
+			_dbContext.Games.Add(game);
+			await _dbContext.SaveChangesAsync();
+		}
+
+		var alreadyOwned = await _dbContext.UserGames
+			.AnyAsync(ug => ug.UserId == userId && ug.GameId == game.Id);
+
+		if (alreadyOwned)
+		{
+			throw new InvalidOperationException("User already owns this game");
+		}
+
+		var userGame = new UserGame
+		{
+			UserId = userId,
+			GameId = game.Id
+		};
+
+		
+		
+
+		await _dbContext.UserGames.AddAsync(userGame);
+		await _dbContext.SaveChangesAsync();
+	}
 	public async Task<AuthUserDTO?> GetAuthUserAsync(string userId)
 	{
 		return await _dbContext.Users
@@ -133,5 +189,49 @@ public class UserService : IUserService
 				u.AvatarUrl
 			))
 			.FirstOrDefaultAsync();
+	}
+
+	public async Task<IdentityResult> DeleteUser(string userId)
+	{
+		var found = await _userManager.FindByIdAsync(userId);
+
+		if (found == null)
+		{
+			return IdentityResult.Failed(new IdentityError
+			{
+				Code = "UserNotFound",
+				Description = "User not found"
+			});
+		}
+
+		return await _userManager.DeleteAsync(found);
+	}
+	public async Task UpdateGamerTagAsync(string userId, int gameId, string? gamerTag)
+	{
+		var userGame = await _dbContext.UserGames
+			.FirstOrDefaultAsync(ug => ug.UserId == userId && ug.GameId == gameId);
+
+		if (userGame == null)
+		{
+			throw new KeyNotFoundException("User does not have this game");
+		}
+
+		userGame.GamerTag = string.IsNullOrWhiteSpace(gamerTag) ? null : gamerTag.Trim();
+		await _dbContext.SaveChangesAsync();
+	}
+
+	public async Task RemoveGameFromUserAsync(string userId, int gameId)
+	{
+		var userGame = await _dbContext.UserGames
+			.FirstOrDefaultAsync(ug => ug.UserId == userId && ug.GameId == gameId);
+
+		if (userGame == null)
+		{
+			throw new KeyNotFoundException("User does not have this game");
+		}
+
+		// removes it from the user, but keeps it as a game entity.
+		_dbContext.UserGames.Remove(userGame);
+		await _dbContext.SaveChangesAsync();
 	}
 }
