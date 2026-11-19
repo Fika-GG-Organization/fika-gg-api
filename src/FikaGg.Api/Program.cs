@@ -44,6 +44,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 	{
 		// Production
 		options.Cookie.SameSite = SameSiteMode.None;
+		options.Cookie.Extensions.Add("Partitioned");
 	}
 });
 
@@ -135,6 +136,27 @@ app.Use(async (context, next) =>
 	}
 	await next();
 });
+
+// CSRF Protection
+if (!app.Environment.IsDevelopment())
+{
+	var allowedOrigin = app.Configuration["frontend"];
+
+	app.Use(async(context, next) =>
+	{
+		var method = context.Request.Method;
+		var isSafeMethod = HttpMethods.IsGet(method) || HttpMethods.IsHead(method) || HttpMethods.IsOptions(method);
+		var origin = context.Request.Headers.Origin.ToString();
+
+		if (!isSafeMethod && !string.IsNullOrEmpty(origin)
+			&& !string.Equals(origin, allowedOrigin, StringComparison.OrdinalIgnoreCase))
+		{
+			context.Response.StatusCode = StatusCodes.Status403Forbidden;
+			return;
+		}
+		await next();
+	});
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
