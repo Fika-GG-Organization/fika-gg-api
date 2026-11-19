@@ -4,7 +4,7 @@ namespace FikaGg.Api.Features.EventViews;
 
 public record GetEventDTO(
 	int Id,
-	string HostId,
+	GetEventHostDTO? Host,
 	string Title,
 	string? Description,
 	GetEventGameDTO? Game,
