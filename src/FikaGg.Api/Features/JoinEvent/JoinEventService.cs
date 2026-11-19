@@ -2,31 +2,79 @@ using FikaGg.Api.Common.Enums;
 using FikaGg.Api.Common.Utils;
 using FikaGg.Api.Data;
 using FikaGg.Api.Features.EventViews;
+using Microsoft.EntityFrameworkCore;
 
 namespace FikaGg.Api.Features.JoinEvent;
 
 public class JoinEventService(AppDbContext dbContext, IEventViewsService viewService)
 {
-	public async Task<GetEventByIdDTO> AddUserParticipant(string userId, DTOJoinEvent dto)
+	public async Task<GetEventByIdDTO> AddEventParticipantAsync(string userId, int eventId, string isoDateTime)
 	{
-		Validate.DTOJoinEvent(dto);
+		// event is needed to get participant count and max player limit.
+		var @event = await dbContext.Events
+			.Where(e => e.Id == eventId)
+			.Include(e => e.Participants.OrderBy(p => p.JoinedAt))
+			.FirstOrDefaultAsync()
+			?? throw new KeyNotFoundException($"Could not find Event with that id.");
 
-		if (await dbContext.EventParticipants.FindAsync(dto.EventId, userId) == null)
+		var eventParticipant = @event.Participants.FirstOrDefault(p => p.UserId == userId);
+
+		if (eventParticipant == null)
 		{
-			return new Proble 
+			dbContext.EventParticipants.Add(new()
+			{
+				UserId = userId,
+				EventId = eventId,
+				Status = (@event.Participants.Count < @event.MaxPlayers)
+					? ParticipantStatus.Joined   // User will join if max player limit is not reached.
+					: ParticipantStatus.Backup,  // Otherwise user will join as backup.
+				JoinedAt = Converter.DateConverter(isoDateTime),
+			});
+
+			dbContext.SaveChanges();
+		}
+		else
+		{
+			throw new ArgumentException("User is  already in event participant list.");
 		}
 
-		dbContext.EventParticipants.Add(new()
-		{
-			UserId = userId,
-			EventId = dto.EventId,
-			Status = (ParticipantStatus)dto.Status,
-			JoinedAt = Converter.DateConverter(dto.JoinedAt),
-		});
+		return await viewService.GetEventByIdAsync(eventId)
+			?? throw new InvalidOperationException("Could not find event despite modifying it.");
+	}
+
+	public async Task<GetEventByIdDTO> RemoveEventParticipantAsync(string userId, int eventId)
+	{
+		// Remove from the event's participant list
+		var eventParticipant = await dbContext.EventParticipants.FindAsync(eventId, userId)
+			?? throw new KeyNotFoundException($"Could not find the user to remove from event participation list.");
+
+		dbContext.EventParticipants.Remove(eventParticipant);
 
 		dbContext.SaveChanges();
 
-		return await viewService.GetEventByIdAsync(dto.EventId)
-			?? throw new InvalidOperationException("Could not find event despite modifying to it.");
+		// Then all event participants status must be updated.
+		var list = await dbContext.Events
+			.Where(e => e.Id == eventId)
+			.Include(e => e.Participants.OrderBy(e => e.JoinedAt))
+			.FirstOrDefaultAsync();
+
+		if (list != null)
+		{
+			// All players within limit will join.
+			await foreach (var p in list.Participants.Take(list.MaxPlayers).ToAsyncEnumerable())
+			{
+				p.Status = ParticipantStatus.Joined;
+			}
+			// All players outside of limit will become backup.
+			await foreach (var p in list.Participants.Skip(list.MaxPlayers).ToAsyncEnumerable())
+			{
+				p.Status = ParticipantStatus.Backup;
+			}
+		}
+
+		dbContext.SaveChanges();
+
+		return await viewService.GetEventByIdAsync(eventId)
+			?? throw new InvalidOperationException("Could not find event despite modifying it.");
 	}
 }

@@ -1,3 +1,4 @@
+using FikaGg.Api.Features.EventViews;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -5,12 +6,16 @@ using System.Security.Claims;
 namespace FikaGg.Api.Features.JoinEvent;
 
 [ApiController]
-[Route("api/events/")]
+[Route("api/event/")]
 [Authorize]
 public class JoinEventController(JoinEventService service) : ControllerBase
 {
-	[HttpPost("join")]
-	public async Task<ActionResult<int>> Join([FromBody] DTOJoinEvent dto)
+	[HttpPost("{eventId:int}/join")]
+	[HttpPut("{eventId:int}/join")]
+	public async Task<ActionResult<GetEventByIdDTO>> Join(
+		[FromRoute] int eventId,
+		[FromRoute] string joinedAt
+		)
 	{
 		var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -19,8 +24,23 @@ public class JoinEventController(JoinEventService service) : ControllerBase
 			return Unauthorized();
 		}
 
-		var eventId = await service.AddUserParticipant(userId, dto);
+		var @event = await service.AddEventParticipantAsync(userId, eventId, joinedAt);
 
-		return Ok(eventId);
+		return Ok(@event);
+	}
+
+	[HttpDelete("{eventId:int}/leave")]
+	public async Task<ActionResult<GetEventByIdDTO>> Leave([FromRoute] int eventId)
+	{
+		var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+		if (userId == null)
+		{
+			return Unauthorized();
+		}
+
+		var @event = await service.RemoveEventParticipantAsync(userId, eventId);
+
+		return Ok(@event);
 	}
 }
