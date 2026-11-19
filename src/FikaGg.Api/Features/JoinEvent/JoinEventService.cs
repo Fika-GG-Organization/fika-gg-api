@@ -8,7 +8,7 @@ namespace FikaGg.Api.Features.JoinEvent;
 
 public class JoinEventService(AppDbContext dbContext, IEventViewsService viewService)
 {
-	public async Task<GetEventByIdDTO> AddEventParticipantAsync(string userId, int eventId, string isoDateTime)
+	public async Task<GetEventByIdDTO> AddEventParticipantAsync(string userId, int eventId)
 	{
 		// event is needed to get participant count and max player limit.
 		var @event = await dbContext.Events
@@ -28,14 +28,14 @@ public class JoinEventService(AppDbContext dbContext, IEventViewsService viewSer
 				Status = (@event.Participants.Count < @event.MaxPlayers)
 					? ParticipantStatus.Joined   // User will join if max player limit is not reached.
 					: ParticipantStatus.Backup,  // Otherwise user will join as backup.
-				JoinedAt = Converter.DateConverter(isoDateTime),
+				JoinedAt = Converter.DateConverter(DateTime.UtcNow.ToString("o")),
 			});
 
 			dbContext.SaveChanges();
 		}
 		else
 		{
-			throw new ArgumentException("User is  already in event participant list.");
+			throw new ArgumentException("User is already participating in this event.");
 		}
 
 		return await viewService.GetEventByIdAsync(eventId)

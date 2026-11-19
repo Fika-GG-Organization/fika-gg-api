@@ -11,10 +11,7 @@ namespace FikaGg.Api.Features.JoinEvent;
 public class JoinEventController(JoinEventService service) : ControllerBase
 {
 	[HttpPost("{eventId:int}/join")]
-	public async Task<ActionResult<GetEventByIdDTO>> Join(
-		[FromRoute] int eventId,
-		[FromBody] string joinedAt
-		)
+	public async Task<ActionResult<GetEventByIdDTO>> Join([FromRoute] int eventId)
 	{
 		var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -23,9 +20,15 @@ public class JoinEventController(JoinEventService service) : ControllerBase
 			return Unauthorized();
 		}
 
-		var @event = await service.AddEventParticipantAsync(userId, eventId, joinedAt);
-
-		return Ok(@event);
+		try
+		{
+			var @event = await service.AddEventParticipantAsync(userId, eventId);
+			return Ok(@event);
+		}
+		catch (ArgumentException ex)
+		{
+			return BadRequest(ex.Message);
+		}
 	}
 
 	[HttpDelete("{eventId:int}/leave")]
