@@ -11,10 +11,9 @@ namespace FikaGg.Api.Features.JoinEvent;
 public class JoinEventController(JoinEventService service) : ControllerBase
 {
 	[HttpPost("{eventId:int}/join")]
-	[HttpPut("{eventId:int}/join")]
 	public async Task<ActionResult<GetEventByIdDTO>> Join(
 		[FromRoute] int eventId,
-		[FromRoute] string joinedAt
+		[FromBody] string joinedAt
 		)
 	{
 		var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
