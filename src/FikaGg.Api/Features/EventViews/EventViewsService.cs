@@ -15,7 +15,7 @@ public class EventViewsService(AppDbContext context) : IEventViewsService
 			.Include(e => e.Participants)
 			.Select(e => new GetEventByIdDTO(
 				e.Id,
-				e.HostId,
+				e.Host == null ? null : new GetEventHostDTO(e.Host.Id, e.Host.DisplayName, e.Host.AvatarUrl),
 				e.Title,
 				e.Description,
 				e.Game == null ? null : new GetEventGameDTO(e.Game.Id, e.Game.RawgId, e.Game.Name, e.Game.CoverUrl),
