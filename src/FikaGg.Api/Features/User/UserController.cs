@@ -138,6 +138,7 @@ public class UserController(UserService userService) : ControllerBase
 		return NoContent();
 	}
 
+	[Authorize]
 	[HttpPut("/UpdateProfile")]
 	public async Task<ActionResult> UpdateUserProfile(UpdateProfileDTO dto)
 	{
