@@ -145,7 +145,7 @@ public class UserController(UserService userService) : ControllerBase
 		try
 		{
 			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-			var result = await userService.UpdateUserProfileAsync(dto, userId);
+			var result = await userService.UpdateUserProfileAsync(dto, userId!);
 			if (result.Succeeded)
 			{
 				return Ok();
