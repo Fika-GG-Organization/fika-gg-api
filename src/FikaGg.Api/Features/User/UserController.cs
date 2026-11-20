@@ -137,4 +137,26 @@ public class UserController(UserService userService) : ControllerBase
 		await userService.RemoveGameFromUserAsync(userId, gameId);
 		return NoContent();
 	}
+
+	[HttpPut("/UpdateProfile")]
+	public async Task<ActionResult> UpdateUserProfile(UpdateProfileDTO dto)
+	{
+		try
+		{
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			var result = await userService.UpdateUserProfileAsync(dto, userId);
+			if (result.Succeeded)
+			{
+				return Ok();
+			}
+			else
+			{
+				return BadRequest();
+			}
+		}
+		catch (InvalidOperationException ex)
+		{
+			return BadRequest(ex.Message);
+		}
+	}
 }
