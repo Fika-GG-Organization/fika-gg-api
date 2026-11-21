@@ -173,7 +173,7 @@ public async Task<IdentityResult> UpdateUserProfileAsync(UpdateProfileDTO dto, s
 		}
 	}
 
-	await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+	//await using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
 	if (changingName)
 	{
@@ -213,7 +213,7 @@ public async Task<IdentityResult> UpdateUserProfileAsync(UpdateProfileDTO dto, s
 			return result;
 	}
 
-	await transaction.CommitAsync();
+	//await transaction.CommitAsync();
 	return IdentityResult.Success;
 }
 
