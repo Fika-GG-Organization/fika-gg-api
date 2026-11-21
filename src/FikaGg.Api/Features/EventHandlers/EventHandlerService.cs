@@ -135,35 +135,41 @@ public class EventHandlerService(AppDbContext context, IEventViewsService eventV
 		await context.SaveChangesAsync();
 	}
 
+	/// <summary>
+	/// Method that alows a host to migrate an event to a selected event participant.
+	/// </summary>
+	/// <param name="dto"></param>
+	/// <param name="originalHostId"></param>
+	/// <returns></returns>
+	/// <exception cref="KeyNotFoundException"></exception>
+	/// <exception cref="InvalidOperationException"></exception>
 	public async Task MigrateEventHostAsync(EventHostMigrateDTO dto, string originalHostId)
 	{
-		//Fetching target user from DB
-		var foundTarget = await context.Users
-			.FirstOrDefaultAsync(u =>
-			u.DisplayName == dto.TargetUserDisplayName &&
-			u.Email == dto.TargetUserEmail);
+		var normalizedEmail = dto.TargetUserEmail.ToUpperInvariant();
 
-		//Fetching target event from DB
-		var foundEvent = await context.Events
+		var targetUser = await context.Users
+			.SingleOrDefaultAsync(u =>
+				u.NormalizedEmail == normalizedEmail &&
+				u.DisplayName == dto.TargetUserDisplayName)
+			?? throw new KeyNotFoundException("Target user not found.");
+
+		if (targetUser.Id == originalHostId)
+			throw new InvalidOperationException("Target user is already the host.");
+
+		var targetEvent = await context.Events
 			.FirstOrDefaultAsync(e =>
-			e.Host.Id == originalHostId &&
-			e.Id == dto.EventId);
+				e.Id == dto.EventId &&
+				e.HostId == originalHostId)
+			?? throw new KeyNotFoundException("Event not found or you are not its host.");
 
-		//make sure that the target host is part of the event:
-		bool confirmed = false;
+		bool isParticipant = await context.EventParticipants
+			.AnyAsync(p => p.EventId == targetEvent.Id && p.UserId == targetUser.Id);
 
-		foreach(EventParticipant ep in foundEvent.Participants)
-		{
-			if(ep.UserId == foundTarget.Id)
-			{
-				confirmed = true;
-			}
-		}
+		if (!isParticipant)
+			throw new InvalidOperationException("Target user is not a participant of this event.");
 
-		if(confirmed)
-		{
-			foundEvent.Host = foundTarget;
-			foundEvent.HostId = foundTarget.Id;
-		}
+		targetEvent.Host = targetUser;
+
+		await context.SaveChangesAsync();
 	}
 }

@@ -52,7 +52,17 @@ public class EventHandlerController(IEventHandlerService service) : ControllerBa
 	[HttpPatch("updateEvent/MigrateHost")]
 	public async Task<ActionResult>MigrateHost(EventHostMigrateDTO dto)
 	{
-		return Ok();
+		var hostId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+		var result = service.MigrateEventHostAsync(dto, hostId!);
+
+		if (result.IsCompletedSuccessfully)
+		{
+			return Ok();
+		}
+		else
+		{
+			return BadRequest();
+		}
 	}
 
 }
