@@ -165,7 +165,7 @@ public class EventHandlerService(AppDbContext context, IEventViewsService eventV
 		if (!isParticipant)
 			throw new InvalidOperationException("Target user is not a participant of this event.");
 
-		targetEvent.Host = targetUser;
+		targetEvent.HostId = targetUser.Id;
 		var result = await context.SaveChangesAsync();
 		return result;
 	}
