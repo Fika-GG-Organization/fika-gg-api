@@ -1,7 +1,9 @@
 using FikaGg.Api.Common.Enums;
 using FikaGg.Api.Data;
+using FikaGg.Api.Entities;
 using FikaGg.Api.Features.EventHandlers;
 using FikaGg.Api.Features.EventViews;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FikaGg.Api.Features.EventHandlers;
@@ -131,5 +133,37 @@ public class EventHandlerService(AppDbContext context, IEventViewsService eventV
 		}
 
 		await context.SaveChangesAsync();
+	}
+
+	public async Task MigrateEventHostAsync(EventHostMigrateDTO dto, string originalHostId)
+	{
+		//Fetching target user from DB
+		var foundTarget = await context.Users
+			.FirstOrDefaultAsync(u =>
+			u.DisplayName == dto.TargetUserDisplayName &&
+			u.Email == dto.TargetUserEmail);
+
+		//Fetching target event from DB
+		var foundEvent = await context.Events
+			.FirstOrDefaultAsync(e =>
+			e.Host.Id == originalHostId &&
+			e.Id == dto.EventId);
+
+		//make sure that the target host is part of the event:
+		bool confirmed = false;
+
+		foreach(EventParticipant ep in foundEvent.Participants)
+		{
+			if(ep.UserId == foundTarget.Id)
+			{
+				confirmed = true;
+			}
+		}
+
+		if(confirmed)
+		{
+			foundEvent.Host = foundTarget;
+			foundEvent.HostId = foundTarget.Id;
+		}
 	}
 }

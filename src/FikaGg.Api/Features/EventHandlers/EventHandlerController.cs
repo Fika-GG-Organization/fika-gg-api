@@ -2,6 +2,7 @@ using FikaGg.Api.Features.EventHandlers;
 using FikaGg.Api.Features.EventViews;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Security.Claims;
 
 namespace FikaGg.Api.Features.EventHandlers;
@@ -46,6 +47,12 @@ public class EventHandlerController(IEventHandlerService service) : ControllerBa
 		await service.DeleteEventAsync(id, UserId);
 
 		return NoContent();
+	}
+
+	[HttpPatch("updateEvent/MigrateHost")]
+	public async Task<ActionResult>MigrateHost(EventHostMigrateDTO dto)
+	{
+		return Ok();
 	}
 
 }
