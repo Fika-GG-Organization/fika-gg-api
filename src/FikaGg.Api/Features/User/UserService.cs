@@ -138,84 +138,90 @@ public class UserService : IUserService
 	/// <param name="dto"></param>
 	/// <param name="userId"></param>
 	/// <returns></returns>
-public async Task<IdentityResult> UpdateUserProfileAsync(UpdateProfileDTO dto, string userId)
-{
-	if (dto == null)
-		return IdentityResult.Failed(new IdentityError
-		{
-			Code = "EmptyObject",
-			Description = "Incoming object cannot be null, no changes applied"
-		});
-
-	var user = await _userManager.FindByIdAsync(userId);
-	if (user == null)
-		return IdentityResult.Failed(new IdentityError
-		{
-			Code = "NoUser",
-			Description = "User not Found"
-		});
-
-	var newName = dto.DisplayName?.Trim();
-	var changingName = !string.IsNullOrWhiteSpace(newName) && newName != user.DisplayName;
-	var changingEmail = !string.IsNullOrWhiteSpace(dto.Email)
-		&& !string.Equals(user.Email, dto.Email, StringComparison.OrdinalIgnoreCase);
-	var changingPassword = !string.IsNullOrEmpty(dto.NewPassword);
-
-	if (changingEmail || changingPassword)
+	public async Task<IdentityResult> UpdateUserProfileAsync(UpdateProfileDTO dto, string userId)
 	{
-		if (string.IsNullOrEmpty(dto.CurrentPassword) || !await _userManager.CheckPasswordAsync(user, dto.CurrentPassword))
-		{
+		if (dto == null)
 			return IdentityResult.Failed(new IdentityError
 			{
-				Code = "CredentialMismatch",
-				Description = "Credentials do not match, no changes applied"
+				Code = "EmptyObject",
+				Description = "Incoming object cannot be null, no changes applied"
 			});
-		}
-	}
 
-	//await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+		var user = await _userManager.FindByIdAsync(userId);
+		if (user == null)
+			return IdentityResult.Failed(new IdentityError
+			{
+				Code = "NoUser",
+				Description = "User not Found"
+			});
 
-	if (changingName)
-	{
-		var nameTaken = await _dbContext.Users
-					.AnyAsync(u => u.DisplayName == newName &&
-				u.Id != user.Id);
-		if (nameTaken)
+		var newName = dto.DisplayName?.Trim();
+		var changingName = !string.IsNullOrWhiteSpace(newName) && newName != user.DisplayName;
+		var changingEmail = !string.IsNullOrWhiteSpace(dto.Email)
+			&& !string.Equals(user.Email, dto.Email, StringComparison.OrdinalIgnoreCase);
+		var changingPassword = !string.IsNullOrEmpty(dto.NewPassword);
+
+		if (changingEmail || changingPassword)
 		{
+			if (string.IsNullOrEmpty(dto.CurrentPassword) || !await _userManager.CheckPasswordAsync(user, dto.CurrentPassword))
+			{
 				return IdentityResult.Failed(new IdentityError
 				{
-					Code = "DuplicateDisplayName",
-					Description = "Displayname is already taken."
+					Code = "CredentialMismatch",
+					Description = "Credentials do not match, no changes applied"
 				});
+			}
 		}
-		user.DisplayName = newName!;
-		var result = await _userManager.UpdateAsync(user);
-		if (!result.Succeeded)
-			return result;
+
+		var strategy = _dbContext.Database.CreateExecutionStrategy();
+		return await strategy.ExecuteAsync(async () =>
+		{
+			await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
+			if (changingName)
+			{
+				var nameTaken = await _dbContext.Users
+							.AnyAsync(u => u.DisplayName == newName &&
+						u.Id != user.Id);
+				if (nameTaken)
+				{
+					return IdentityResult.Failed(new IdentityError
+					{
+						Code = "DuplicateDisplayName",
+						Description = "Displayname is already taken."
+					});
+				}
+				user.DisplayName = newName!;
+				var result = await _userManager.UpdateAsync(user);
+				if (!result.Succeeded)
+					return result;
+			}
+
+			if (changingEmail)
+			{
+				var token = await _userManager.GenerateChangeEmailTokenAsync(user, dto.Email!);
+				var result = await _userManager.ChangeEmailAsync(user, dto.Email!, token);
+				if (!result.Succeeded)
+					return result;
+
+				result = await _userManager.SetUserNameAsync(user, dto.Email!);
+				if (!result.Succeeded)
+					return result;
+			}
+
+			if (changingPassword)
+			{
+				var result = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword!, dto.NewPassword!);
+				if (!result.Succeeded)
+					return result;
+			}
+
+			await transaction.CommitAsync();
+			return IdentityResult.Success;
+		});
 	}
 
-	if (changingEmail)
-	{
-		var token = await _userManager.GenerateChangeEmailTokenAsync(user, dto.Email!);
-		var result = await _userManager.ChangeEmailAsync(user, dto.Email!, token);
-		if (!result.Succeeded)
-			return result;
-
-		result = await _userManager.SetUserNameAsync(user, dto.Email!);
-		if (!result.Succeeded)
-			return result;
-	}
-
-	if (changingPassword)
-	{
-		var result = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword!, dto.NewPassword!);
-		if (!result.Succeeded)
-			return result;
-	}
-
-	//await transaction.CommitAsync();
-	return IdentityResult.Success;
-}
+	
 
 	public async Task AddGameToUserAsync(string userId, int gameRawgId)
 	{
