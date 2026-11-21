@@ -44,8 +44,18 @@ public class JoinEventService(AppDbContext dbContext, IEventViewsService viewSer
 
 	public async Task<GetEventByIdDTO> RemoveEventParticipantAsync(string userId, int eventId)
 	{
-		// Remove from the event's participant list
-		var eventParticipant = await dbContext.EventParticipants.FindAsync(eventId, userId)
+		// Prevent user to leave the event if they're the host
+		var @event = await dbContext.Events
+			.Where(e => e.Id == eventId).Include(e => e.Participants).FirstOrDefaultAsync()
+			?? throw new KeyNotFoundException($"Could not find the event to modify.");
+
+		if (@event.HostId == userId)
+		{
+			throw new ArgumentException($"The user is the host of the event and can not therefor remove themself from UserParticipant list.");
+		}
+
+		// Remove user from the event's participant list
+		var eventParticipant = @event.Participants.FirstOrDefault(p => p.UserId == userId)
 			?? throw new KeyNotFoundException($"Could not find the user to remove from event participation list.");
 
 		dbContext.EventParticipants.Remove(eventParticipant);
