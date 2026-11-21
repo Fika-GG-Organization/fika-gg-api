@@ -3,7 +3,7 @@ using FikaGg.Api.Data;
 using FikaGg.Api.Entities;
 using FikaGg.Api.Features.EventHandlers;
 using FikaGg.Api.Features.EventViews;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FikaGg.Api.Features.EventHandlers;
@@ -136,21 +136,18 @@ public class EventHandlerService(AppDbContext context, IEventViewsService eventV
 	}
 
 	/// <summary>
-	/// Method that alows a host to migrate an event to a selected event participant.
+	/// Method that allows a host to migrate an event to a selected event participant.
 	/// </summary>
 	/// <param name="dto"></param>
 	/// <param name="originalHostId"></param>
 	/// <returns></returns>
 	/// <exception cref="KeyNotFoundException"></exception>
 	/// <exception cref="InvalidOperationException"></exception>
-	public async Task MigrateEventHostAsync(EventHostMigrateDTO dto, string originalHostId)
+	public async Task<int> MigrateEventHostAsync(EventHostMigrateDTO dto, string originalHostId)
 	{
-		var normalizedEmail = dto.TargetUserEmail.ToUpperInvariant();
-
 		var targetUser = await context.Users
 			.SingleOrDefaultAsync(u =>
-				u.NormalizedEmail == normalizedEmail &&
-				u.DisplayName == dto.TargetUserDisplayName)
+			u.Id == dto.TargetUserId)
 			?? throw new KeyNotFoundException("Target user not found.");
 
 		if (targetUser.Id == originalHostId)
@@ -169,7 +166,7 @@ public class EventHandlerService(AppDbContext context, IEventViewsService eventV
 			throw new InvalidOperationException("Target user is not a participant of this event.");
 
 		targetEvent.Host = targetUser;
-
-		await context.SaveChangesAsync();
+		var result = await context.SaveChangesAsync();
+		return result;
 	}
 }

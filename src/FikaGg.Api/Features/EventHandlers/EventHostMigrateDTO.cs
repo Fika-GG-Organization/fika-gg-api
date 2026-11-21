@@ -5,13 +5,7 @@ namespace FikaGg.Api.Features.EventHandlers;
 public class EventHostMigrateDTO
 {
 	[Required]
-	[EmailAddress(ErrorMessage ="Invalid Email format")]
-	public string TargetUserEmail { get; set; }
-
-	[Required]
-	[MaxLength(50)]
-	public string TargetUserDisplayName { get; set; }
-
+	public string TargetUserId { get; set; }
 	[Required]
 	public int EventId { get; set; }
 }
