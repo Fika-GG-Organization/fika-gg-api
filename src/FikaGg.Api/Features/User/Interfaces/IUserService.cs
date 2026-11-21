@@ -10,4 +10,5 @@ public interface IUserService
 	Task<IdentityResult> DeleteUser(string userId);
 	Task UpdateGamerTagAsync(string userId, int gameId, string? gamerTag);
 	Task RemoveGameFromUserAsync(string userId, int gameId);
+	Task<IdentityResult> UpdateUserProfileAsync(UpdateProfileDTO dto, string userId);
 }
