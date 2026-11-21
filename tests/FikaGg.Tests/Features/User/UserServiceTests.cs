@@ -507,4 +507,20 @@ public class UserServiceTests
 		Assert.Equal("new@example.com", reloaded.UserName);
 		Assert.True(await _userManager.CheckPasswordAsync(reloaded, "NewPassword456!"));
 	}
+
+	[Fact]
+	public async Task UpdateUserProfile_DuplicateDisplayName_IsRejected()
+	{
+		// Arrange
+		var takenUser = await CreateUserAsync("TakenDisplayName", "taken@test.com");
+		var updatingUser = await CreateUserAsync("NewDisplayName", "newdn@test.com");
+
+		// Act
+		var result = await _userService.UpdateUserProfileAsync(new UpdateProfileDTO
+		{ DisplayName= "TakenDisplayName" }, updatingUser.Id);
+
+		// Assert
+		Assert.False(result.Succeeded);
+		Assert.Contains(result.Errors, e => e.Code == "DuplicateDisplayName");
+	}
 }

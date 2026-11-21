@@ -177,6 +177,17 @@ public async Task<IdentityResult> UpdateUserProfileAsync(UpdateProfileDTO dto, s
 
 	if (changingName)
 	{
+		var nameTaken = await _dbContext.Users
+					.AnyAsync(u => u.DisplayName == newName &&
+				u.Id != user.Id);
+		if (nameTaken)
+		{
+				return IdentityResult.Failed(new IdentityError
+				{
+					Code = "DuplicateDisplayName",
+					Description = "Displayname is already taken."
+				});
+		}
 		user.DisplayName = newName!;
 		var result = await _userManager.UpdateAsync(user);
 		if (!result.Succeeded)
