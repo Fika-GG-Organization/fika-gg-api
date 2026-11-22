@@ -87,4 +87,36 @@ public class JoinEventService(AppDbContext dbContext, IEventViewsService viewSer
 		return await viewService.GetEventByIdAsync(eventId)
 			?? throw new InvalidOperationException("Could not find event despite modifying it.");
 	}
+
+	/// <summary>
+	/// Iterates through every event the user is participating in to check if any of them overlap
+	/// between <paramref name="eventStart"/> and <paramref name="eventEnd"/>.
+	/// </summary>
+	/// <param name="userId">Identifies all events the user is an participant of.</param>
+	/// <param name="eventStart">The event's starting datetime to compare with, formatted as ISO 8601 string.</param>
+	/// <param name="eventEnd">The event's ending datetime to compare with, formatted as ISO 8601 string.</param>
+	/// <returns>
+	/// <see langword="true"/> if an event overlaps; otherwise return <see langword="false"/>.
+	/// </returns>
+	public async Task<bool> CheckIfEventsOverlapAsync(string userId, DateTime eventStart, DateTime eventEnd)
+	{
+		await foreach (var ep in dbContext.EventParticipants
+			.Where(ep => ep.UserId == userId)
+			.Include(ep => ep.Event)
+			.AsAsyncEnumerable())
+		{
+			if (ep.Event != null)
+			{
+				// Source - https://stackoverflow.com/a/13513973
+				// Posted by Rawling
+				// Retrieved 2026-11-22, License - CC BY-SA 3.0
+				if ((ep.Event.StartTime <= eventEnd && eventStart <= ep.Event.EndTime)
+					|| (eventStart <= ep.Event.EndTime && ep.Event.StartTime <= eventEnd))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }
