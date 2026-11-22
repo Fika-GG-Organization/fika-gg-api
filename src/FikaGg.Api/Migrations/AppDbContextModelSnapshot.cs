@@ -199,6 +199,41 @@ namespace FikaGg.Api.Migrations
                     b.ToTable("Games");
                 });
 
+            modelBuilder.Entity("FikaGg.Api.Entities.Notice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Viewed")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "Viewed");
+
+                    b.ToTable("Notices");
+                });
+
             modelBuilder.Entity("FikaGg.Api.Entities.UserGame", b =>
                 {
                     b.Property<string>("UserId")
@@ -407,6 +442,17 @@ namespace FikaGg.Api.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("FikaGg.Api.Entities.Notice", b =>
+                {
+                    b.HasOne("FikaGg.Api.Entities.ApplicationUser", "User")
+                        .WithMany("Notices")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FikaGg.Api.Entities.UserGame", b =>
                 {
                     b.HasOne("FikaGg.Api.Entities.Game", "Game")
@@ -484,6 +530,8 @@ namespace FikaGg.Api.Migrations
                     b.Navigation("HostedEvents");
 
                     b.Navigation("JoinedEvents");
+
+                    b.Navigation("Notices");
                 });
 
             modelBuilder.Entity("FikaGg.Api.Entities.Event", b =>

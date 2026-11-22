@@ -14,6 +14,8 @@ using FikaGg.Api.Features.Avatars;
 using Microsoft.AspNetCore.DataProtection;
 using FikaGg.Api.Features.Auth;
 using FikaGg.Api.Features.JoinEvent;
+using FikaGg.Api.Features.Notices.Interfaces;
+using FikaGg.Api.Features.Notices.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -83,6 +85,7 @@ builder.Services.AddScoped<GameService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<JoinEventService>();
+builder.Services.AddScoped<INoticeService, NoticeService>();
 builder.Services.AddScoped<IEventHandlerService, EventHandlerService>();
 builder.Services.AddScoped<IEventViewsService, EventViewsService>();
 
