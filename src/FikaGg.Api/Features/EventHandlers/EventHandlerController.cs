@@ -54,7 +54,7 @@ public class EventHandlerController(IEventHandlerService service) : ControllerBa
 		var hostId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 		var result = await service.MigrateEventHostAsync(dto, hostId!);
 
-		if (result == 1)
+		if (result > 0)
 		{
 			return Ok();
 		}

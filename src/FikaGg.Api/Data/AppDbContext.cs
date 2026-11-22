@@ -14,6 +14,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Event> Events => Set<Event>();
     public DbSet<EventParticipant> EventParticipants => Set<EventParticipant>();
 	public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
+	public DbSet<Notice> Notices => Set<Notice>();
 
 	protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -27,5 +28,15 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         builder.Entity<EventParticipant>()
             .Property(p => p.Status)
             .HasConversion<string>();
+
+		builder.Entity<Notice>(e =>
+		{
+			e.HasOne(n => n.User)
+			.WithMany(u => u.Notices)
+			.HasForeignKey(n => n.UserId)
+			.OnDelete(DeleteBehavior.Cascade);
+
+			e.HasIndex(n => new { n.UserId, n.Viewed });
+		});
     }
 }
