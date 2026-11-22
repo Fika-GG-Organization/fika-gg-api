@@ -8,5 +8,6 @@ public interface IEventHandlerService
 	Task<GetEventByIdDTO> CreateEventAsync(CreateEventDTO createEventDto, string userId);
 	Task<GetEventByIdDTO> UpdateEventAsync(int eventId, CreateEventDTO updateEventDto, string userId);
 	Task DeleteEventAsync(int eventId, string userId);
+	Task<int> MigrateEventHostAsync(EventHostMigrateDTO dto, string originalHostId);
 
 }
