@@ -4,7 +4,7 @@ namespace FikaGg.Api.Entities;
 public class Notice
 {
 	public int Id { get; set; }
-	public string UserId { get; set; }
+	public string UserId { get; set; } = null!;
 
 	[MaxLength(100)]
 	public string Title { get; set; } = "";
