@@ -1,7 +1,9 @@
 using FikaGg.Api.Common.Enums;
 using FikaGg.Api.Data;
+using FikaGg.Api.Entities;
 using FikaGg.Api.Features.EventHandlers;
 using FikaGg.Api.Features.EventViews;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FikaGg.Api.Features.EventHandlers;
@@ -131,5 +133,40 @@ public class EventHandlerService(AppDbContext context, IEventViewsService eventV
 		}
 
 		await context.SaveChangesAsync();
+	}
+
+	/// <summary>
+	/// Method that allows a host to migrate an event to a selected event participant.
+	/// </summary>
+	/// <param name="dto"></param>
+	/// <param name="originalHostId"></param>
+	/// <returns></returns>
+	/// <exception cref="KeyNotFoundException"></exception>
+	/// <exception cref="InvalidOperationException"></exception>
+	public async Task<int> MigrateEventHostAsync(EventHostMigrateDTO dto, string originalHostId)
+	{
+		var targetUser = await context.Users
+			.SingleOrDefaultAsync(u =>
+			u.Id == dto.TargetUserId)
+			?? throw new KeyNotFoundException("Target user not found.");
+
+		if (targetUser.Id == originalHostId)
+			throw new InvalidOperationException("Target user is already the host.");
+
+		var targetEvent = await context.Events
+			.FirstOrDefaultAsync(e =>
+				e.Id == dto.EventId &&
+				e.HostId == originalHostId)
+			?? throw new KeyNotFoundException("Event not found or you are not its host.");
+
+		bool isParticipant = await context.EventParticipants
+			.AnyAsync(p => p.EventId == targetEvent.Id && p.UserId == targetUser.Id);
+
+		if (!isParticipant)
+			throw new InvalidOperationException("Target user is not a participant of this event.");
+
+		targetEvent.HostId = targetUser.Id;
+		var result = await context.SaveChangesAsync();
+		return result;
 	}
 }

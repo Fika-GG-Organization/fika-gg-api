@@ -1,3 +1,4 @@
+using CloudinaryDotNet.Actions;
 using FikaGg.Api.Data;
 using FikaGg.Api.Entities;
 using FikaGg.Api.Features.Events;
@@ -6,6 +7,7 @@ using FikaGg.Api.Features.User.Interfaces;
 using FikaGg.Api.Integrations.Rawg;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Net.WebSockets;
 using System.Reflection.Metadata.Ecma335;
 
 
@@ -128,6 +130,93 @@ public class UserService : IUserService
 		return IdentityResult.Success;
 	}
 
+	/// <summary>
+	/// Profile update method that checks for changes in Email, passwords and display names,
+	/// checks validity of incoming changes and applies valid changes to the profile.
+	/// Will roll back changes if it fails, maintaining original data.
+	/// </summary>
+	/// <param name="dto"></param>
+	/// <param name="userId"></param>
+	/// <returns></returns>
+public async Task<IdentityResult> UpdateUserProfileAsync(UpdateProfileDTO dto, string userId)
+{
+	if (dto == null)
+		return IdentityResult.Failed(new IdentityError
+		{
+			Code = "EmptyObject",
+			Description = "Incoming object cannot be null, no changes applied"
+		});
+
+	var user = await _userManager.FindByIdAsync(userId);
+	if (user == null)
+		return IdentityResult.Failed(new IdentityError
+		{
+			Code = "NoUser",
+			Description = "User not Found"
+		});
+
+	var newName = dto.DisplayName?.Trim();
+	var changingName = !string.IsNullOrWhiteSpace(newName) && newName != user.DisplayName;
+	var changingEmail = !string.IsNullOrWhiteSpace(dto.Email)
+		&& !string.Equals(user.Email, dto.Email, StringComparison.OrdinalIgnoreCase);
+	var changingPassword = !string.IsNullOrEmpty(dto.NewPassword);
+
+	if (changingEmail || changingPassword)
+	{
+		if (string.IsNullOrEmpty(dto.CurrentPassword) || !await _userManager.CheckPasswordAsync(user, dto.CurrentPassword))
+		{
+			return IdentityResult.Failed(new IdentityError
+			{
+				Code = "CredentialMismatch",
+				Description = "Credentials do not match, no changes applied"
+			});
+		}
+	}
+
+	await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
+	if (changingName)
+	{
+		var nameTaken = await _dbContext.Users
+					.AnyAsync(u => u.DisplayName == newName &&
+				u.Id != user.Id);
+		if (nameTaken)
+		{
+				return IdentityResult.Failed(new IdentityError
+				{
+					Code = "DuplicateDisplayName",
+					Description = "Displayname is already taken."
+				});
+		}
+		user.DisplayName = newName!;
+		var result = await _userManager.UpdateAsync(user);
+		if (!result.Succeeded)
+			return result;
+	}
+
+	if (changingEmail)
+	{
+		var token = await _userManager.GenerateChangeEmailTokenAsync(user, dto.Email!);
+		var result = await _userManager.ChangeEmailAsync(user, dto.Email!, token);
+		if (!result.Succeeded)
+			return result;
+
+		result = await _userManager.SetUserNameAsync(user, dto.Email!);
+		if (!result.Succeeded)
+			return result;
+	}
+
+	if (changingPassword)
+	{
+		var result = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword!, dto.NewPassword!);
+		if (!result.Succeeded)
+			return result;
+	}
+
+	await transaction.CommitAsync();
+	return IdentityResult.Success;
+}
+
 	public async Task AddGameToUserAsync(string userId, int gameRawgId)
 	{
 		var user = await _dbContext.Users.FindAsync(userId);
@@ -199,7 +288,7 @@ public class UserService : IUserService
 		{
 			return IdentityResult.Failed(new IdentityError
 			{
-				Code = "UserNotFound",
+				Code = "NoUser",
 				Description = "User not found"
 			});
 		}
