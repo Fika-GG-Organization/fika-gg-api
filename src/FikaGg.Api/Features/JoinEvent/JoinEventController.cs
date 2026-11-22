@@ -1,4 +1,3 @@
-using FikaGg.Api.Common.Utils;
 using FikaGg.Api.Features.EventViews;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,12 +11,8 @@ namespace FikaGg.Api.Features.JoinEvent;
 public class JoinEventController(JoinEventService service) : ControllerBase
 {
 	[HttpGet]
-	[HttpHead]
-	[Route("checkOverlap")]
-	[ProducesResponseType(typeof(OkResult), 200)]
-	[ProducesResponseType(typeof(NoContentResult), 204)]
-	public async Task<IActionResult> Check(
-		[FromQuery] string startTime, [FromQuery] string endTime)
+	[Route("{eventId:int}/checkOverlap")]
+	public async Task<ActionResult<DTOGetCheck>> Check([FromRoute] int eventId)
 	{
 		var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -26,10 +21,9 @@ public class JoinEventController(JoinEventService service) : ControllerBase
 			return Unauthorized();
 		}
 
-		var result = await service.CheckIfEventsOverlapAsync(
-			userId, Converter.DateConverter(startTime), Converter.DateConverter(endTime));
+		var result = await service.CheckIfEventsOverlapAsync(userId, eventId);
 
-		return result ? Ok() : NoContent();
+		return Ok(result);
 	}
 
 	[HttpPost("{eventId:int}/join")]
