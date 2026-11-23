@@ -89,19 +89,21 @@ public class JoinEventService(AppDbContext dbContext, IEventViewsService viewSer
 	}
 
 	/// <summary>
-	/// Iterates through every event the user is participating in to check if any of them overlap
-	/// between <paramref name="eventStart"/> and <paramref name="eventEnd"/>.
+	/// Iterates through every event the user is participating in and checks if any of them overlap
+	/// with the requested event.
 	/// </summary>
 	/// <param name="userId">Identifies all events the user is an participant of.</param>
-	/// <param name="eventStart">The event's starting datetime to compare with, formatted as ISO 8601 string.</param>
-	/// <param name="eventEnd">The event's ending datetime to compare with, formatted as ISO 8601 string.</param>
+	/// <param name="eventId">Identifies the requested event, i.e. the event user is trying to join.</param>
 	/// <returns>
-	/// <see langword="true"/> if an event overlaps; otherwise return <see langword="false"/>.
+	/// <see langword="true"/> if there are overlaps with the requested event; otherwise return <see langword="false"/>.
 	/// </returns>
-	public async Task<bool> CheckIfEventsOverlapAsync(string userId, DateTime eventStart, DateTime eventEnd)
+	public async Task<DTOGetCheck> CheckIfEventsOverlapAsync(string userId, int eventId)
 	{
+		var @event = await dbContext.Events.FindAsync(eventId)
+			?? throw new KeyNotFoundException("Could not find the event user is trying to join.");
+
 		await foreach (var ep in dbContext.EventParticipants
-			.Where(ep => ep.UserId == userId)
+			.Where(ep => ep.UserId == userId && ep.EventId != eventId)
 			.Include(ep => ep.Event)
 			.AsAsyncEnumerable())
 		{
@@ -110,13 +112,12 @@ public class JoinEventService(AppDbContext dbContext, IEventViewsService viewSer
 				// Source - https://stackoverflow.com/a/13513973
 				// Posted by Rawling
 				// Retrieved 2026-11-22, License - CC BY-SA 3.0
-				if ((ep.Event.StartTime <= eventEnd && eventStart <= ep.Event.EndTime)
-					|| (eventStart <= ep.Event.EndTime && ep.Event.StartTime <= eventEnd))
+				if (ep.Event.StartTime <= @event.EndTime && @event.StartTime <= ep.Event.EndTime)
 				{
-					return true;
+					return new DTOGetCheck(true);
 				}
 			}
 		}
-		return false;
+		return new DTOGetCheck(false);
 	}
 }
