@@ -103,7 +103,7 @@ public class JoinEventService(AppDbContext dbContext, IEventViewsService viewSer
 			?? throw new KeyNotFoundException("Could not find the event user is trying to join.");
 
 		await foreach (var ep in dbContext.EventParticipants
-			.Where(ep => ep.UserId == userId)
+			.Where(ep => ep.UserId == userId && ep.EventId != eventId)
 			.Include(ep => ep.Event)
 			.AsAsyncEnumerable())
 		{
