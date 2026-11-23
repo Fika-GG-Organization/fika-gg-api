@@ -21,4 +21,9 @@ public class ApplicationUser : IdentityUser
 	/// <summary> A <b>Navigation Property</b> that points to the list of Games in this User's profile. </summary>
 	public virtual ICollection<UserGame> Games { get; set; } = [];
 
+	/// <summary>
+	/// A <b>Navigation Property</b> that points to the list of notices associated with a users profile
+	/// </summary>
+	public virtual ICollection<Notice> Notices { get; set; } = [];
+
 }

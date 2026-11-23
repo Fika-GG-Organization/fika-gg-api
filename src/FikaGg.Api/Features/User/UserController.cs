@@ -22,7 +22,6 @@ public class UserController(UserService userService) : ControllerBase
 	}
 
 	[HttpGet("current")]
-	[Authorize]
 	public async Task<ActionResult<UserDataDTO>> GetCurrentUserData()
 	{
 
@@ -55,7 +54,6 @@ public class UserController(UserService userService) : ControllerBase
 		return Ok();
 	}
 
-	[Authorize]
 	[HttpPost("add/game/{gameId}")]
 	public async Task<ActionResult> AddGameToUser([FromRoute] int gameId)
 	{
@@ -92,7 +90,6 @@ public class UserController(UserService userService) : ControllerBase
 	}
 
 	// Endpoint will run delete user that deletes the account and all associated data.
-	[Authorize]
 	[HttpDelete("delete")]
 	public async Task<ActionResult> DeleteUserAccount()
 	{
@@ -136,5 +133,27 @@ public class UserController(UserService userService) : ControllerBase
 
 		await userService.RemoveGameFromUserAsync(userId, gameId);
 		return NoContent();
+	}
+
+	[HttpPut("UpdateProfile")]
+	public async Task<ActionResult> UpdateUserProfile(UpdateProfileDTO dto)
+	{
+		try
+		{
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			var result = await userService.UpdateUserProfileAsync(dto, userId!);
+			if (result.Succeeded)
+			{
+				return Ok();
+			}
+			else
+			{
+				return BadRequest();
+			}
+		}
+		catch (InvalidOperationException ex)
+		{
+			return BadRequest(ex.Message);
+		}
 	}
 }

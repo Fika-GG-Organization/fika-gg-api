@@ -1,7 +1,10 @@
 using FikaGg.Api.Common.Enums;
 using FikaGg.Api.Data;
+using FikaGg.Api.Entities;
 using FikaGg.Api.Features.EventHandlers;
 using FikaGg.Api.Features.EventViews;
+using FikaGg.Api.Features.Notices;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FikaGg.Api.Features.EventHandlers;
@@ -52,7 +55,9 @@ public class EventHandlerService(AppDbContext context, IEventViewsService eventV
 
 	public async Task<GetEventByIdDTO> UpdateEventAsync(int eventId, CreateEventDTO updateEventDto, string userId)
 	{
-		var @event = await context.Events.FirstOrDefaultAsync(e => e.Id == eventId)
+		var @event = await context.Events
+			.Include(e => e.Participants)
+			.FirstOrDefaultAsync(e => e.Id == eventId)
 			?? throw new KeyNotFoundException();
 
 		if (@event?.HostId != userId)
@@ -97,14 +102,10 @@ public class EventHandlerService(AppDbContext context, IEventViewsService eventV
 			@event.MaxPlayers = updateEventDto.MaxPlayers;
 			@event.CreatedAt = updateEventDto.CreatedAt;
 
-			foreach (var player in @event.Participants.Skip(@event.MaxPlayers))
-			{
-				// Every participants above the MaxPlayers limit will have their status set to Backup.  
-				player.Status = ParticipantStatus.Backup;
-			}
-
 			var result = context.Events.Update(@event);
 		}
+
+		ApplyPLayerLimit(@event!);
 
 		await context.SaveChangesAsync();
 
@@ -126,10 +127,87 @@ public class EventHandlerService(AppDbContext context, IEventViewsService eventV
 
 		if (@event != null)
 		{
+			// Sends notifications to all participants of the event that it is now deleted.
+			context.Notices.AddRange(
+				@event.Participants
+				.Where(p => p.UserId != userId)
+				.Select(p=> NoticeTemplates.EventDeleted(p.UserId, @event.Title)));
+
 			context.EventParticipants.RemoveRange(@event.Participants);
 			context.Events.Remove(@event);
 		}
 
 		await context.SaveChangesAsync();
+	}
+
+	/// <summary>
+	/// Method that allows a host to migrate an event to a selected event participant.
+	/// </summary>
+	/// <param name="dto"></param>
+	/// <param name="originalHostId"></param>
+	/// <returns></returns>
+	/// <exception cref="KeyNotFoundException"></exception>
+	/// <exception cref="InvalidOperationException"></exception>
+	public async Task<int> MigrateEventHostAsync(EventHostMigrateDTO dto, string originalHostId)
+	{
+		var targetUser = await context.Users
+			.SingleOrDefaultAsync(u =>
+			u.Id == dto.TargetUserId)
+			?? throw new KeyNotFoundException("Target user not found.");
+
+		if (targetUser.Id == originalHostId)
+			throw new InvalidOperationException("Target user is already the host.");
+
+		var targetEvent = await context.Events
+			.FirstOrDefaultAsync(e =>
+				e.Id == dto.EventId &&
+				e.HostId == originalHostId)
+			?? throw new KeyNotFoundException("Event not found or you are not its host.");
+
+		bool isParticipant = await context.EventParticipants
+			.AnyAsync(p => p.EventId == targetEvent.Id && p.UserId == targetUser.Id);
+
+		if (!isParticipant)
+			throw new InvalidOperationException("Target user is not a participant of this event.");
+
+		targetEvent.HostId = targetUser.Id;
+
+		//Sends a notice to the target user that they have been made host of the event
+		context.Notices.Add(NoticeTemplates.HostMigrated(targetUser.Id, targetEvent.Title));
+
+		var result = await context.SaveChangesAsync();
+		return result;
+	}
+
+	//-----------------------------HELPERS------------------------------//
+
+
+	/// <summary>
+	/// This method promoted a reserve participant
+	/// in case the MaxPlayers limit is raised or a slot has
+	/// opened up from a participant leaving
+	/// </summary>
+	/// <param name="event"></param>
+	private void ApplyPLayerLimit(Event @event)
+	{
+		var ordered = @event.Participants
+			.Where(p => p.Status is ParticipantStatus.Joined or ParticipantStatus.Backup)
+			.OrderBy(p => p.JoinedAt)
+			.ToList();
+		for (int i = 0; i < ordered.Count; i++)
+		{
+			var player = ordered[i];
+			var shouldBeJoined = i < @event.MaxPlayers;
+
+			if(shouldBeJoined && player.Status == ParticipantStatus.Backup)
+			{
+				player.Status = ParticipantStatus.Joined;
+				context.Notices.Add(NoticeTemplates.PromotedFromReserve(player.UserId, @event.Title));
+			}
+			else if(!shouldBeJoined && player.Status == ParticipantStatus.Joined)
+			{
+				player.Status = ParticipantStatus.Backup;
+			}
+		}
 	}
 }
