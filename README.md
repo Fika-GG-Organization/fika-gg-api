@@ -1,18 +1,21 @@
 # Fika GG API
 
-![Place any banner here]()
+![FIKA.GG logo. It depicts a minimalistic white tea or coffee cup on a dark background. There's controller pads and two circular buttons printed on the cup.](https://raw.githubusercontent.com/Fika-GG-Organization/fika-gg-web/refs/heads/main/public/fikaggbg.png)
+
+[![.NET CI](https://github.com/Fika-GG-Organization/fika-gg-api/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Fika-GG-Organization/fika-gg-api/actions/workflows/dotnet.yml)
+[![Build and deploy ASP.Net Core app to Azure Web App - fika-gg-api](https://github.com/Fika-GG-Organization/fika-gg-api/actions/workflows/main_fika-gg-api.yml/badge.svg)](https://github.com/Fika-GG-Organization/fika-gg-api/actions/workflows/main_fika-gg-api.yml)
 
 This repository houses the *FIKA GG* API to Postgress database among other backend infrastructure. 
 
 ## Table of Contents
 
-- [Background](#Background)
-	- [See also](#See_also)
-- [Development](#Development)
-	- [Dependencies](#Dependencies)
-	- [CLI](#CLI)
-- [Contributing](#Contributing)
-- [License](#License)
+- [Background](#background)
+	- [See also](#see-also)
+- [Development](#development)
+- [Dependencies](#dependencies)
+	- [Secrets](#secrets)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Background
 
