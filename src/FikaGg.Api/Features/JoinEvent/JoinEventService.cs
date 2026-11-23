@@ -2,6 +2,7 @@ using FikaGg.Api.Common.Enums;
 using FikaGg.Api.Common.Utils;
 using FikaGg.Api.Data;
 using FikaGg.Api.Features.EventViews;
+using FikaGg.Api.Features.Notices;
 using Microsoft.EntityFrameworkCore;
 
 namespace FikaGg.Api.Features.JoinEvent;
@@ -60,30 +61,20 @@ public class JoinEventService(AppDbContext dbContext, IEventViewsService viewSer
 
 		dbContext.EventParticipants.Remove(eventParticipant);
 
-		dbContext.SaveChanges();
+		var remaining = @event.Participants
+			.Where(p => p.UserId != userId)
+			.Where(p => p.Status is ParticipantStatus.Joined or ParticipantStatus.Backup)
+			.OrderBy(p => p.JoinedAt)
+			.ToList();
 
-		// Then all event participants status must be updated.
-		var list = await dbContext.Events
-			.Where(e => e.Id == eventId)
-			.Include(e => e.Participants.OrderBy(e => e.JoinedAt))
-			.FirstOrDefaultAsync();
-
-		if (list != null)
+		foreach(var player in remaining.Take(@event.MaxPlayers).Where(p => p.Status == ParticipantStatus.Backup))
 		{
-			// All players within limit will join.
-			await foreach (var p in list.Participants.Take(list.MaxPlayers).ToAsyncEnumerable())
-			{
-				p.Status = ParticipantStatus.Joined;
-			}
-			// All players outside of limit will become backup.
-			await foreach (var p in list.Participants.Skip(list.MaxPlayers).ToAsyncEnumerable())
-			{
-				p.Status = ParticipantStatus.Backup;
-			}
+			player.Status = ParticipantStatus.Joined;
+			dbContext.Notices.Add(NoticeTemplates.PromotedFromReserve(player.UserId, @event.Title));
 		}
 
-		dbContext.SaveChanges();
-
+		await dbContext.SaveChangesAsync();
+		
 		return await viewService.GetEventByIdAsync(eventId)
 			?? throw new InvalidOperationException("Could not find event despite modifying it.");
 	}
