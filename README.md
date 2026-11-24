@@ -27,6 +27,11 @@ Our main target demographic are Swedish students and young adults with an intere
 
 - [fika-gg-web🔗‍️](https://github.com/Fika-GG-Organization/fika-gg-web): The web client application.
 
+## Usage
+
+1. Follow this [guide](https://docs.github.com/en/pull-requests/how-tos/work-with-forks/fork-a-repo?tool=webui) on how to fork and clone this repository.
+1. 
+
 ## Development
 
 See [docs](docs/README.md) for info about project structure, tutorials, references, etc.
