@@ -13,6 +13,9 @@ using static FikaGg.Tests.GetGameDetailsAsyncTests;
 
 namespace FikaGg.Tests.Features.User;
 
+/// <summary>
+/// Authors: Gabriel Kassarp, Fadi Mrito, George Al-Akhras
+/// </summary>
 public class UserServiceTests
 {
 	private const string TestPassword = "TestPassword123!"; // same password CreateUserAsync uses
