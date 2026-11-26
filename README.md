@@ -29,7 +29,7 @@ Our main target demographic are Swedish students and young adults with an intere
 
 ## Install
 
-This section covers how other developers can clone and run the server locally on your machine. If you want to fork this repository, follow this [guide🔗‍️](https://docs.github.com/en/pull-requests/how-tos/work-with-forks/fork-a-repo?tool=webui).
+How to install for local development:
 
 1. Open CLI/terminal.
 1. Clone the server and the web client repositories to a local folder named `fika-gg/`.
@@ -39,33 +39,17 @@ This section covers how other developers can clone and run the server locally on
     git clone https://github.com/Fika-GG-Organization/fika-gg-web.git fika-gg/web
     ```
 
-1. Install and run [Docker Desktop🔗‍️](https://docs.docker.com/get-started/get-docker/). The server will not start unless Docker Desktop is also running.
-1. In CLI, navigate to server root and run the following command to start the server. 
+If you want to fork these repositories, follow this [guide🔗‍️](https://docs.github.com/en/pull-requests/how-tos/work-with-forks/fork-a-repo?tool=webui).
 
-    ```sh
-    cd fika-gg/api
-    dotnet run --project src/FikaGg.AppHost
-    ```
-
-    1. For **development environments** only, include `--reseed=true` if you want to wipe the database and seed it with new data on startup.
-
-        ```sh
-        dotnet run --project src/FikaGg.AppHost -- --reseed=true
-        ```
-
-        On startup, **Aspire** will prompt for a `seed-password`, which sets the same password for all seeded users.
-
-1. The Aspire dashboard should open in the web browser, providing an overview of the server, web client and database.
-
-    Additionally, Aspire will prompt for environment variables if they're have not yet been inputted.
+---
 
 ### Dependencies
 
-These dependencies are required to be manually installed or configured to set up local development branches.
+These dependencies are required to be manually installed or configured. See most dependencies that are automatically included at [dependencies](docs/development/dependencies.md).
 
 - **Cloudinary**
 
-    Allows our application to store and retrieve profile pictures. 
+    Allows the application to store and retrieve profile pictures. 
     
     On startup, **Aspire** will prompt for cloud name, API key and API secret. These can be acquired by creating a free account at [Cloudinary🔗‍️](https://cloudinary.com/documentation/developer_onboarding_faq_find_credentials).
 
