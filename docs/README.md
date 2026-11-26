@@ -14,7 +14,6 @@
 ## Development
 
 - [Set up middleware pipeline](development/setting-up-pipeline.md) — Guide to setting up app pipeline (middlewares and services).
-- [Endpoint reference](development/endpoint-reference.md) — List of endpoints and models/DTO to send over HTTP
 - [Project dependencies](development/dependencies.md) — Non-extensive list of major 3rd-party dependencies referenced in this project.
 
 ### Custom middlewares
