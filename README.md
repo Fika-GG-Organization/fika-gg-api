@@ -27,10 +27,69 @@ Our main target demographic are Swedish students and young adults with an intere
 
 - [fika-gg-web🔗‍️](https://github.com/Fika-GG-Organization/fika-gg-web): The web client application.
 
-## Usage
+## Install
 
-1. Follow this [guide](https://docs.github.com/en/pull-requests/how-tos/work-with-forks/fork-a-repo?tool=webui) on how to fork and clone this repository.
-1. 
+This section covers how other developers can clone and run the server locally on your machine. If you want to fork this repository, follow this [guide🔗‍️](https://docs.github.com/en/pull-requests/how-tos/work-with-forks/fork-a-repo?tool=webui).
+
+1. Open CLI/terminal.
+1. Clone the server and the web client repositories to a local folder named `fika-gg/`.
+
+    ```sh
+    git clone https://github.com/Fika-GG-Organization/fika-gg-api.git fika-gg/api
+    git clone https://github.com/Fika-GG-Organization/fika-gg-web.git fika-gg/web
+    ```
+
+1. Install and run [Docker Desktop🔗‍️](https://docs.docker.com/get-started/get-docker/). The server will not start unless Docker Desktop is also running.
+1. In CLI, navigate to server root and run the following command to start the server. 
+
+    ```sh
+    cd fika-gg/api
+    dotnet run --project src/FikaGg.AppHost
+    ```
+
+    1. For **development environments** only, include `--reseed=true` if you want to wipe the database and seed it with new data on startup.
+
+        ```sh
+        dotnet run --project src/FikaGg.AppHost -- --reseed=true
+        ```
+
+        On startup, **Aspire** will prompt for a `seed-password`, which sets the same password for all seeded users.
+
+1. The Aspire dashboard should open in the web browser, providing an overview of the server, web client and database.
+
+    Additionally, Aspire will prompt for environment variables if they're have not yet been inputted.
+
+### Dependencies
+
+These dependencies are required to be manually installed or configured to set up local development branches.
+
+- **Cloudinary**
+
+    Allows our application to store and retrieve profile pictures. 
+    
+    On startup, **Aspire** will prompt for cloud name, API key and API secret. These can be acquired by creating a free account at [Cloudinary🔗‍️](https://cloudinary.com/documentation/developer_onboarding_faq_find_credentials).
+
+- **RAWG API**
+
+    The application uses **RAWG** to search for game data. 
+    
+    Get a free RAWG API key at [rawg.io/apidocs🔗‍️](https://rawg.io/apidocs), then run the following command from the server root folder:
+
+    ```sh
+    dotnet user-secrets set "Parameters:rawg-api-key" "<your-key>" --project src/FikaGg.AppHost
+    ```
+    
+    The key is stored locally on your machine (never in the repository) and passed to the API by Aspire on startup.
+
+    Alternatively, you can input the API key on **Aspire** startup.
+
+- **Docker Desktop**
+
+    Required for server startup. Download at [docker.com🔗‍️](https://docs.docker.com/get-started/get-docker/)
+
+- **Node.js‍️**
+
+    Required for developing the web client repository. Download at [nodejs.org🔗‍️](https://nodejs.org/en/download).
 
 ## Development
 
