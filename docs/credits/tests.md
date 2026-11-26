@@ -15,6 +15,6 @@ Each item represents a test class unless stated otherwise.
     - `Features/User/UserServiceTests` — Some of the tests
 - **Gabriel Kassarp**
     - `Features/User/UserServiceTests` — Some of the tests
-    - `GameServiceTests.GetGameDetailsAsyncTests` — The seconds test class
+    - `GameServiceTests.GetGameDetailsAsyncTests` — The second test class
 - **Isak Erbing**
     - `Features/Avatars/AvatarServiceTests`
