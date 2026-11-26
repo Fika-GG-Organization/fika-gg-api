@@ -76,30 +76,6 @@ These dependencies are required to be manually installed or configured. See most
 
     Required for developing the web client repository. Download at [nodejs.org🔗‍️](https://nodejs.org/en/download).
 
-## Dependencies
-
-The repository uses the following 3rd party dependencies.
-
-- Aspire
-- Scalar
-- [RAWG API🔗‍️](https://rawg.io/apidocs) — game data
-- Cloudinary — for user avatars/profile picture
-- XUnit.v3 — Backend tests
-- NSubstitute — Testing helper
-
-### Secrets
-
-The API needs a RAWG API key to search for games. 
-Get a free key at [rawg.io/apidocs🔗‍️](https://rawg.io/apidocs), then run this from the repository root:
-
-    dotnet user-secrets set "Parameters:rawg-api-key" "<your-key>" --project src/FikaGg.AppHost
-
-The key is stored locally on your machine (never in the repository) and passed to the API by Aspire on startup.
-
----
-
-Add cloudinary here
-
 ## Contributing
 
 Visit [Github Issues](https://github.com/orgs/Fika-GG-Organization/projects/1) for tasks to do.
