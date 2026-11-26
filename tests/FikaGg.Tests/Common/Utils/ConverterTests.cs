@@ -2,6 +2,9 @@ using FikaGg.Api.Common.Utils;
 
 namespace FikaGg.Tests.Common.Utils;
 
+/// <summary>
+/// Author: Alex Coh
+/// </summary>
 public class ConverterTests
 {
 	private readonly ITestOutputHelper _output;
