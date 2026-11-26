@@ -26,6 +26,7 @@ Our main target demographic are Swedish students and young adults with an intere
 ### See also
 
 - [fika-gg-web🔗‍️](https://github.com/Fika-GG-Organization/fika-gg-web): The web client application.
+- [docs/README](docs/README.md): For more info about development, project structure, tutorials, references, etc.
 
 ## Install
 
@@ -74,10 +75,6 @@ These dependencies are required to be manually installed or configured. See most
 - **Node.js‍️**
 
     Required for developing the web client repository. Download at [nodejs.org🔗‍️](https://nodejs.org/en/download).
-
-## Development
-
-See [docs](docs/README.md) for info about project structure, tutorials, references, etc.
 
 ## Dependencies
 
