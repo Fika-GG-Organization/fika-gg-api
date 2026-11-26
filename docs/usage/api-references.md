@@ -13,4 +13,6 @@ To view this project's implemented API references:
 
     ![](images/dashboard_api.png)
 
-1. A new tab should open to which will display every API reference available to use!
+1. A new tab should open to which will display every available API reference available in prettier way!
+
+    ![](images/scalar.png)
