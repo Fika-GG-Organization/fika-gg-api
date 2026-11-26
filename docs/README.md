@@ -14,7 +14,7 @@
 ## Development
 
 - [Set up middleware pipeline](development/setting-up-pipeline.md) — Guide to setting up app pipeline (middlewares and services).
-- [Endpoint reference](development/endpoint-reference.md) — List of endpoints and models/DTO to send over HTTP
+- ~~[Endpoint reference](development/endpoint-reference.md) — List of endpoints and models/DTO to send over HTTP~~ Deprecated, see [Getting started](#getting-started) section for the new way of viewing endpoint references.
 
 ### Custom middlewares
 

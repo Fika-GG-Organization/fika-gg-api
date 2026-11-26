@@ -1,5 +1,10 @@
 # Endpoint Reference
 
+> [!WARNING]
+>
+> This file is now deprecated and should be ignored in favour of using Scalar API instead. 
+> Maintaining this file to match our API endpoints became too much work for way too little gain in the end.
+
 A reference list of all server endpoint URLs, and what their request 
 body should contain, and what the server response body will contain.
 
