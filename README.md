@@ -11,9 +11,8 @@ This repository houses the *FIKA GG* API to Postgress database among other backe
 
 - [Background](#background)
 	- [See also](#see-also)
-- [Development](#development)
-- [Dependencies](#dependencies)
-	- [Secrets](#secrets)
+- [Install](#install)
+    - [Dependencies](#dependencies)
 - [Contributing](#contributing)
 - [License](#license)
 
