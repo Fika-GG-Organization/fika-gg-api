@@ -19,3 +19,7 @@
 ### Custom middlewares
 
 - [GlobalExceptionHandler](development/middlewares/globalexceptionhandler.md) — How the GlobalExceptionHandler works
+
+## Credits
+
+- [Tests](credits/tests.md) — Developers who has contributed with unit tests.

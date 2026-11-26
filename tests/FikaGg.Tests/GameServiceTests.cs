@@ -4,6 +4,9 @@ using static FikaGg.Tests.GetGameDetailsAsyncTests;
 
 namespace FikaGg.Tests;
 
+/// <summary>
+/// Author: Fadi Mrito
+/// </summary>
 public class GameServiceTests
 {
 	[Fact]
@@ -47,6 +50,9 @@ public class GameServiceTests
 	}
 }
 
+/// <summary>
+/// Author: Gabriel Kassarp
+/// </summary>
 public class GetGameDetailsAsyncTests
 {
 	[Fact]
