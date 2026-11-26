@@ -5,6 +5,7 @@
 - [Folder Structure](usage/folder-structure.md) — Folder structure overview
 - [WTF is EditorConfig?](usage/editorconfig.md) — Optional: explains how the `.editorconfig` file works
 - [API🔗‍️](https://www.rfc-editor.org/rfc/rfc9110.html#section-9) — How to design HTTP methods according to RFC9110
+- [API references](usage/api-references.md) — On how to view every endpoint and their respective request/response models/DTO 
 
 ## Troubleshooting
 
