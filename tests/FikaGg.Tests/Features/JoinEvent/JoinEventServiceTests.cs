@@ -6,8 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace FikaGg.Tests.Features.JoinEvent;
 
 /// <summary>
-/// 
-/// Author: <see href="github.com/blubeatbee">@blubeatbee</see>
+/// Author: Alex Coh
 /// </summary>
 public class JoinEventServiceTests
 {

@@ -8,6 +8,9 @@ using NSubstitute;
 
 namespace FikaGg.Tests.Features.Avatars;
 
+/// <summary>
+/// Author: Isak Erbing
+/// </summary>
 public class AvatarServiceTests
 {
 	private readonly AppDbContext _db;
