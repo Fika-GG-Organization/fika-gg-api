@@ -4,6 +4,7 @@
 
 - [Testing server with Aspire](#testing-server-with-aspire)
 - [Testing web client](#testing-web-client)
+- [Seed database](#seed-database)
 - [Viewing database content](#viewing-database-content)
 
 ## Testing server with Aspire
@@ -61,6 +62,24 @@ There might be problems with testing the web frontend. Here are a few ways to tr
     ```
     
     The reason is because `FikaGg.Apphost/AppHost.cs` is hard coded to find the web client at this location.
+
+## Seed database
+Tutorial on how to seed database on start up.
+
+1. Open terminal at server root folder (i.e. where you see `.git/`).
+1. Run this command:
+
+    ```sh
+    dotnet run --project src/FikaGg.AppHost -- --reseed=true
+    ```
+
+1. On startup, Aspire Dashboard will prompt you for a `seed-password`. Whatever value you input here will be used as the password for all newly seeded users!
+1. Now the database will have its old data wiped, and reseeded with new data.
+
+
+> [!NOTE]
+> 
+> This command is for **Development Environment** only. Meaning the database in actual **Production** will not be affected by this data seeding command.
 
 ## Viewing database content
 
