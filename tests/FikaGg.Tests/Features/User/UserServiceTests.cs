@@ -13,6 +13,9 @@ using static FikaGg.Tests.GetGameDetailsAsyncTests;
 
 namespace FikaGg.Tests.Features.User;
 
+/// <summary>
+/// Authors: Gabriel Kassarp, Fadi Mrito, George Al-Akhras
+/// </summary>
 public class UserServiceTests
 {
 	private const string TestPassword = "TestPassword123!"; // same password CreateUserAsync uses
@@ -40,7 +43,7 @@ public class UserServiceTests
 		//Allows the ChangeEmailAsync method to operate as designed in tests.
 		var identityOptions = new IdentityOptions();
 		identityOptions.User.RequireUniqueEmail = true;
-		
+
 		_userManager = new UserManager<ApplicationUser>(
 			store,
 			Options.Create(identityOptions),
@@ -113,6 +116,9 @@ public class UserServiceTests
 		};
 	}
 
+	/// <summary>
+	/// Author: Gabriel Kassarp
+	/// </summary>
 	[Fact]
 	public async Task RegisterUserAsync_ValidDto_ShouldSucceed()
 	{
@@ -129,6 +135,9 @@ public class UserServiceTests
 		Assert.Equal(dto.DisplayName, created!.DisplayName);
 	}
 
+	/// <summary>
+	/// Author: Gabriel Kassarp
+	/// </summary>
 	[Fact]
 	public async Task RegisterUserAsync_DuplicateDisplayName_ShouldFail()
 	{
@@ -145,6 +154,9 @@ public class UserServiceTests
 		Assert.Null(await _userManager.FindByEmailAsync(duplicateDto.Email));
 	}
 
+	/// <summary>
+	/// Author: George Al-Akhras
+	/// </summary>
 	[Fact]
 	public async Task DeleteUser_Using_UserId_Should_Succeed()
 	{
@@ -161,6 +173,9 @@ public class UserServiceTests
 		Assert.True(await _dbContext.Users.AnyAsync(u => u.Id == bystander.Id));
 	}
 
+	/// <summary>
+	/// Author: George Al-Akhras
+	/// </summary>
 	[Fact]
 	public async Task Delete_Nonexisting_User_Using_UserId_Should_Fail()
 	{
@@ -174,6 +189,9 @@ public class UserServiceTests
 		Assert.Contains(result.Errors, e => e.Code == "NoUser");
 	}
 
+	/// <summary>
+	/// Author: George Al-Akhras
+	/// </summary>
 	[Fact]
 	public async Task DeleteUser_RemovesTheirGamesParticipationsAndHostedEvents()
 	{
@@ -214,7 +232,10 @@ public class UserServiceTests
 		Assert.True(await _dbContext.Games.AnyAsync(g => g.Id == game.Id));
 	}
 
-	// Fadi: checks if the gamertag gets saved and trimmed
+	/// <summary>
+	/// Author: Fadi Mrito <br/><br/>
+	/// Checks if the gamertag gets saved and trimmed.
+	/// </summary>
 	[Fact]
 	public async Task UpdateGamerTagAsync_OwnedGame_SetsTrimmedTag()
 	{
@@ -227,7 +248,10 @@ public class UserServiceTests
 		Assert.Equal("alexk#EUW", userGame.GamerTag);
 	}
 
-	// Fadi: checks if an empty gamer tag sets the value to null.
+	/// <summary>
+	/// Author: Fadi Mrito <br/><br/>
+	/// Checks if an empty gamer tag sets the value to null.
+	/// </summary>
 	[Fact]
 	public async Task UpdateGamerTagAsync_EmptyTag_SetsNull()
 	{
@@ -239,7 +263,10 @@ public class UserServiceTests
 		Assert.Null((await _dbContext.UserGames.SingleAsync()).GamerTag);
 	}
 
-	// Fadi: checks if removing a game only removes it from the users games
+	/// <summary>
+	/// Author: Fadi Mrito <br/><br/>
+	/// Checks if removing a game only removes it from the users games.
+	/// </summary>
 	[Fact]
 	public async Task RemoveGameFromUserAsync_OwnedGame_RemovesIt()
 	{
@@ -251,7 +278,10 @@ public class UserServiceTests
 		Assert.Empty(_dbContext.UserGames);
 	}
 
-	// Fadi: checks if removing someone elses game throws instead of removing it
+	/// <summary>
+	/// Author: Fadi Mrito <br/><br/>
+	/// Checks if removing someone elses game throws instead of removing it.
+	/// </summary>
 	[Fact]
 	public async Task RemoveGameFromUserAsync_SomeoneElsesGame_Throws()
 	{
@@ -263,6 +293,9 @@ public class UserServiceTests
 
 	// ---------- UpdateUserProfileAsync ----------
 
+	/// <summary>
+	/// Author: George Al-Akhras
+	/// </summary>
 	[Fact]
 	public async Task UpdateUserProfileAsync_NullDto_ReturnsEmptyObjectError()
 	{
@@ -277,6 +310,9 @@ public class UserServiceTests
 		Assert.Contains(result.Errors, e => e.Code == "EmptyObject");
 	}
 
+	/// <summary>
+	/// Author: George Al-Akhras
+	/// </summary>
 	[Fact]
 	public async Task UpdateUserProfileAsync_UnknownUser_ReturnsNoUserError()
 	{
@@ -289,6 +325,9 @@ public class UserServiceTests
 		Assert.Contains(result.Errors, e => e.Code == "NoUser");
 	}
 
+	/// <summary>
+	/// Author: George Al-Akhras
+	/// </summary>
 	[Fact]
 	public async Task UpdateUserProfileAsync_EmptyDto_SucceedsAndChangesNothing()
 	{
@@ -308,6 +347,9 @@ public class UserServiceTests
 
 	// -- display name --
 
+	/// <summary>
+	/// Author: George Al-Akhras
+	/// </summary>
 	[Fact]
 	public async Task UpdateUserProfileAsync_DisplayName_IsUpdatedWithoutPassword()
 	{
@@ -323,6 +365,9 @@ public class UserServiceTests
 		Assert.Equal("Alexander", (await ReloadUserAsync(user.Id)).DisplayName);
 	}
 
+	/// <summary>
+	/// Author: George Al-Akhras
+	/// </summary>
 	[Fact]
 	public async Task UpdateUserProfileAsync_DisplayName_IsTrimmed()
 	{
@@ -336,6 +381,9 @@ public class UserServiceTests
 		Assert.Equal("Alex", (await ReloadUserAsync(user.Id)).DisplayName);
 	}
 
+	/// <summary>
+	/// Author: George Al-Akhras
+	/// </summary>
 	[Theory]
 	[InlineData(null)]
 	[InlineData("")]
@@ -356,6 +404,9 @@ public class UserServiceTests
 
 	// -- email --
 
+	/// <summary>
+	/// Author: George Al-Akhras
+	/// </summary>
 	[Fact]
 	public async Task UpdateUserProfileAsync_Email_WithCorrectPassword_UpdatesEmailAndUserName()
 	{
@@ -376,6 +427,9 @@ public class UserServiceTests
 		Assert.Null(await _userManager.FindByNameAsync("testuser1@example.com"));
 	}
 
+	/// <summary>
+	/// Author: George Al-Akhras
+	/// </summary>
 	[Theory]
 	[InlineData(null)]
 	[InlineData("")]
@@ -397,6 +451,9 @@ public class UserServiceTests
 		Assert.Equal("testuser1@example.com", reloaded.UserName);
 	}
 
+	/// <summary>
+	/// Author: George Al-Akhras
+	/// </summary>
 	[Fact]
 	public async Task UpdateUserProfileAsync_Email_SameAddressDifferentCasing_IsNoOpAndNeedsNoPassword()
 	{
@@ -412,6 +469,9 @@ public class UserServiceTests
 		Assert.Equal("testuser1@example.com", (await ReloadUserAsync(user.Id)).Email);
 	}
 
+	/// <summary>
+	/// Author: George Al-Akhras
+	/// </summary>
 	[Fact]
 	public async Task UpdateUserProfileAsync_Email_UsedByAnotherUser_IsRejected()
 	{
@@ -431,6 +491,9 @@ public class UserServiceTests
 
 	// -- password --
 
+	/// <summary>
+	/// Author: George Al-Akhras
+	/// </summary>
 	[Fact]
 	public async Task UpdateUserProfileAsync_Password_WithCorrectCurrentPassword_IsChanged()
 	{
@@ -448,6 +511,9 @@ public class UserServiceTests
 		Assert.False(await _userManager.CheckPasswordAsync(reloaded, TestPassword));
 	}
 
+	/// <summary>
+	/// Author: George Al-Akhras
+	/// </summary>
 	[Theory]
 	[InlineData(null)]
 	[InlineData("")]
@@ -467,6 +533,9 @@ public class UserServiceTests
 		Assert.True(await _userManager.CheckPasswordAsync(await ReloadUserAsync(user.Id), TestPassword));
 	}
 
+	/// <summary>
+	/// Author: George Al-Akhras
+	/// </summary>
 	[Fact]
 	public async Task UpdateUserProfileAsync_Password_FailingValidation_IsRejected()
 	{
@@ -484,6 +553,9 @@ public class UserServiceTests
 
 	// -- combined --
 
+	/// <summary>
+	/// Author: George Al-Akhras
+	/// </summary>
 	[Fact]
 	public async Task UpdateUserProfileAsync_AllThreeFields_AreUpdatedTogether()
 	{
@@ -508,6 +580,9 @@ public class UserServiceTests
 		Assert.True(await _userManager.CheckPasswordAsync(reloaded, "NewPassword456!"));
 	}
 
+	/// <summary>
+	/// Author: George Al-Akhras
+	/// </summary>
 	[Fact]
 	public async Task UpdateUserProfile_DuplicateDisplayName_IsRejected()
 	{

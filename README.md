@@ -11,9 +11,8 @@ This repository houses the *FIKA GG* API to Postgress database among other backe
 
 - [Background](#background)
 	- [See also](#see-also)
-- [Development](#development)
-- [Dependencies](#dependencies)
-	- [Secrets](#secrets)
+- [Install](#install)
+    - [Dependencies](#dependencies)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -26,34 +25,55 @@ Our main target demographic are Swedish students and young adults with an intere
 ### See also
 
 - [fika-gg-web🔗‍️](https://github.com/Fika-GG-Organization/fika-gg-web): The web client application.
+- [docs/README](docs/README.md): For more info about development, project structure, tutorials, references, etc.
 
-## Development
+## Install
 
-See [docs](docs/README.md) for info about project structure, tutorials, references, etc.
+How to install for local development:
 
-## Dependencies
+1. Open CLI/terminal.
+1. Clone the server and the web client repositories to a local folder named `fika-gg/`.
 
-The repository uses the following 3rd party dependencies.
+    ```sh
+    git clone https://github.com/Fika-GG-Organization/fika-gg-api.git fika-gg/api
+    git clone https://github.com/Fika-GG-Organization/fika-gg-web.git fika-gg/web
+    ```
 
-- Aspire
-- Scalar
-- [RAWG API🔗‍️](https://rawg.io/apidocs) — game data
-- Cloudinary — for user avatars/profile picture
-- XUnit.v3 — Backend tests
-- NSubstitute — Testing helper
-
-### Secrets
-
-The API needs a RAWG API key to search for games. 
-Get a free key at [rawg.io/apidocs🔗‍️](https://rawg.io/apidocs), then run this from the repository root:
-
-    dotnet user-secrets set "Parameters:rawg-api-key" "<your-key>" --project src/FikaGg.AppHost
-
-The key is stored locally on your machine (never in the repository) and passed to the API by Aspire on startup.
+If you want to fork these repositories, follow this [guide🔗‍️](https://docs.github.com/en/pull-requests/how-tos/work-with-forks/fork-a-repo?tool=webui).
 
 ---
 
-Add cloudinary here
+### Dependencies
+
+These dependencies are required to be manually installed or configured. See most dependencies that are automatically included at [dependencies](docs/development/dependencies.md).
+
+- **Cloudinary**
+
+    Allows the application to store and retrieve profile pictures. 
+    
+    On startup, **Aspire** will prompt for cloud name, API key and API secret. These can be acquired by creating a free account at [Cloudinary🔗‍️](https://cloudinary.com/documentation/developer_onboarding_faq_find_credentials).
+
+- **RAWG API**
+
+    The application uses **RAWG** to search for game data. 
+    
+    Get a free RAWG API key at [rawg.io/apidocs🔗‍️](https://rawg.io/apidocs), then run the following command from the server root folder:
+
+    ```sh
+    dotnet user-secrets set "Parameters:rawg-api-key" "<your-key>" --project src/FikaGg.AppHost
+    ```
+    
+    The key is stored locally on your machine (never in the repository) and passed to the API by Aspire on startup.
+
+    Alternatively, you can input the API key on **Aspire** startup.
+
+- **Docker Desktop**
+
+    Required for server startup. Download at [docker.com🔗‍️](https://docs.docker.com/get-started/get-docker/)
+
+- **Node.js‍️**
+
+    Required for developing the web client repository. Download at [nodejs.org🔗‍️](https://nodejs.org/en/download).
 
 ## Contributing
 

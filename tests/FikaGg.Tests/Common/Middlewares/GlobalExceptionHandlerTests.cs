@@ -4,6 +4,9 @@ using Microsoft.Extensions.Logging;
 
 namespace FikaGg.Tests.Common.Middlewares;
 
+/// <summary>
+/// Author: Alex Coh
+/// </summary>
 public class GlobalExceptionHandlerTests
 {
 	/// <summary>
